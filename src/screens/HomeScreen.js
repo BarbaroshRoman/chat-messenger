@@ -13,21 +13,27 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {navigationPages} from './navigation/components/navigationPages';
-import {creatingDialog} from './redux/dialogs/dialogsSlice';
-import {deletingDialog} from './redux/dialogs/dialogsSlice';
-import {DialogView} from './components/DialogView';
-import {HeaderComponent} from './components/HeaderComponent';
-import {creatingChat, deletingChat} from './redux/messages/messagesSlice';
-import {findMessagesStateBranch} from './helpers/currentMessagesStateBranch';
+import {navigationPages} from '../navigation/components/navigationPages';
+import {creatingDialog} from '../redux/dialogs/dialogsSlice';
+import {deletingDialog} from '../redux/dialogs/dialogsSlice';
+import {DialogView} from '../components/DialogView';
+import {HeaderComponent} from '../components/HeaderComponent';
+import {
+  creatingMessageListForDialog,
+  deletingMessagesListForDialog,
+} from '../redux/messages/messagesSlice';
+import {findMessagesListForDialog} from '../helpers/findMessagesListForDialog';
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const flatRef = useRef(null);
 
-  const dialogState = useSelector(state => state.dialogs.dialogsState);
-  const messagesState = useSelector(state => state.messages.messagesState);
+  const dialogsList = useSelector(state => state.dialogs.dialogsList);
+  const messageLists = useSelector(state => state.messages.messageLists);
+  const chosenMessageForForwarding = useSelector(
+    state => state.messages.chosenMessageForForwarding,
+  );
 
   const [dialogNameValue, setDialogNameValue] = React.useState('');
   const [modalCreatingDialog, setModalCreatingDialog] = useState(false);
@@ -61,7 +67,7 @@ export const HomeScreen = () => {
 
       dispatch(creatingDialog(newDialog));
       dispatch(
-        creatingChat({
+        creatingMessageListForDialog({
           dialogId: newDialog.dialogId,
           messagesList: [],
         }),
@@ -78,10 +84,10 @@ export const HomeScreen = () => {
   };
 
   const deleteDialogHelper = () => {
-    const newState = [...dialogState];
+    const newState = [...dialogsList];
     const result = newState.filter(el => el !== chosenDialog);
     dispatch(deletingDialog(result));
-    dispatch(deletingChat(chosenDialog.dialogId));
+    dispatch(deletingMessagesListForDialog(chosenDialog.dialogId));
     setChosenDialog({});
   };
 
@@ -97,18 +103,18 @@ export const HomeScreen = () => {
       },
     ]);
 
-  const renderDialogBox = ({item}) => {
-    const currentMessagesStateBranch = findMessagesStateBranch(
-      messagesState,
+  const renderDialogsList = ({item}) => {
+    const currentMessagesList = findMessagesListForDialog(
+      messageLists,
       item.dialogId,
     );
-    const lastIndex = currentMessagesStateBranch.messagesList.length - 1;
+    const lastIndex = currentMessagesList.messagesList.length - 1;
     return (
       <DialogView
         item={item}
         setChosenDialog={setChosenDialog}
         goToPage={goToPage}
-        currentMessagesStateBranch={currentMessagesStateBranch}
+        currentMessagesList={currentMessagesList}
         lastIndex={lastIndex}
       />
     );
@@ -120,11 +126,13 @@ export const HomeScreen = () => {
         <HeaderComponent
           title={'Список диалогов'}
           chosenItem={chosenDialog}
+          setChosenItem={setChosenDialog}
           modalHeaderMenu={modalHeaderMenu}
           openModalHeaderMenu={openModalHeaderMenu}
           closeModalHeaderMenu={closeModalHeaderMenu}
           openModalCreatingDialog={openModalCreatingDialog}
           deleteItem={() => deleteDialog(chosenDialog.dialogName)}
+          chosenMessageForForwarding={chosenMessageForForwarding}
         />
         <View style={styles.emptyDialogListDescription}>
           <Modal
@@ -156,11 +164,11 @@ export const HomeScreen = () => {
               </View>
             </View>
           </Modal>
-          {dialogState.length ? (
+          {dialogsList.length ? (
             <FlatList
               ref={flatRef}
-              data={dialogState}
-              renderItem={renderDialogBox}
+              data={dialogsList}
+              renderItem={renderDialogsList}
               keyExtractor={item => item.dialogName + Math.random()}
             />
           ) : (
