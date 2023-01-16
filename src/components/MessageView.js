@@ -1,37 +1,23 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-  TouchableHighlight,
-} from 'react-native';
-import Interactable from 'react-native-interactable';
+import {StyleSheet, Text, View, TouchableHighlight} from 'react-native';
 
 export const MessageView = props => {
-  const deltaX = new Animated.Value(0);
-  const deltaY = new Animated.Value(0);
-
   return (
-    <Interactable.View
-      horizontalOnly={true}
-      snapPoints={[
-        {x: 0, id: 'closed'},
-        {x: 0, id: 'open'},
-      ]}
-      boundaries={{left: -50, right: 0}}
-      onSnapStart={props.onDrawerSnap}
-      animatedValueX={deltaX}
-      animatedValueY={deltaY}>
+    <View>
       <TouchableHighlight
         style={styles.messageItemContainer}
         underlayColor={'#7d889b'}
         onPress={() => props.onTouchMessage(props.item)}
-        onLongPress={() => props.setChosenMessageForHeader(props.item)}>
+        onLongPress={() => {
+          props.setChosenMessageForHeader(props.item);
+          props.setChosenMessage({});
+        }}>
         <>
           {props.item.resended ? (
             <View style={styles.messageResendLabel}>
-              <Text style={styles.tableOfContents}>{props.dialogName}</Text>
+              <Text style={styles.tableOfContents} numberOfLines={1}>
+                {props.item.resendedDialogName}
+              </Text>
               <Text style={styles.messageResendText} numberOfLines={1}>
                 {props.item.resendedMessage}
               </Text>
@@ -51,7 +37,7 @@ export const MessageView = props => {
           </View>
         </>
       </TouchableHighlight>
-    </Interactable.View>
+    </View>
   );
 };
 
