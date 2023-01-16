@@ -1,86 +1,89 @@
 import {createSlice} from '@reduxjs/toolkit';
 
-import {findMessagesStateBranch} from '../../helpers/currentMessagesStateBranch';
-import {replaceMessagesStateBranch} from '../../helpers/replacementMessagesStateBranch';
+import {findMessagesListForDialog} from '../../helpers/findMessagesListForDialog';
+import {replaceMessagesListForDialog} from '../../helpers/replaceMessagesListForDialog';
 import {MessagesInitialState} from './messagesState';
 
 const messagesSlice = createSlice({
   name: 'Messages',
   initialState: MessagesInitialState,
   reducers: {
-    creatingChat(state, action) {
-      state.messagesState.push(action.payload);
+    creatingMessageListForDialog(state, action) {
+      state.messageLists.push(action.payload);
     },
     creatingMessages(state, action) {
-      const currentMessagesStateBranch = findMessagesStateBranch(
-        state.messagesState,
+      const currentMessagesList = findMessagesListForDialog(
+        state.messageLists,
         action.payload.dialogId,
       );
-      currentMessagesStateBranch.messagesList.push(action.payload.newMessage);
-      replaceMessagesStateBranch(
-        state.messagesState,
-        currentMessagesStateBranch.dialogId,
-        currentMessagesStateBranch.messagesList,
+      currentMessagesList.messagesList.push(action.payload.newMessage);
+      replaceMessagesListForDialog(
+        state.messageLists,
+        currentMessagesList.dialogId,
+        currentMessagesList.messagesList,
       );
     },
     editingMessages(state, action) {
-      const currentMessagesStateBranch = findMessagesStateBranch(
-        state.messagesState,
+      const currentMessagesList = findMessagesListForDialog(
+        state.messageLists,
         action.payload.dialogId,
       );
-      currentMessagesStateBranch.messagesList.forEach(el => {
+      currentMessagesList.messagesList.forEach(el => {
         if (el.messageId === action.payload.editedMessage.messageId) {
           el.message = action.payload.editedMessage.message;
           el.edited = true;
         }
       });
-      replaceMessagesStateBranch(
-        state.messagesState,
-        currentMessagesStateBranch.dialogId,
-        currentMessagesStateBranch.messagesList,
+      replaceMessagesListForDialog(
+        state.messageLists,
+        currentMessagesList.dialogId,
+        currentMessagesList.messagesList,
       );
     },
     cleaningMessages(state, action) {
-      let currentMessagesStateBranch = findMessagesStateBranch(
-        state.messagesState,
+      let currentMessagesList = findMessagesListForDialog(
+        state.messageLists,
         action.payload.dialogId,
       );
-      currentMessagesStateBranch.messagesList =
-        action.payload.updatedMessagesList;
-      replaceMessagesStateBranch(
-        state.messagesState,
-        currentMessagesStateBranch.dialogId,
-        currentMessagesStateBranch.messagesList,
+      currentMessagesList.messagesList = action.payload.updatedMessagesList;
+      replaceMessagesListForDialog(
+        state.messageLists,
+        currentMessagesList.dialogId,
+        currentMessagesList.messagesList,
       );
     },
     cleaningAllMessages(state, action) {
-      let currentMessagesStateBranch = findMessagesStateBranch(
-        state.messagesState,
+      let currentMessagesList = findMessagesListForDialog(
+        state.messageLists,
         action.payload,
       );
-      currentMessagesStateBranch.messagesList = [];
-      replaceMessagesStateBranch(
-        state.messagesState,
-        currentMessagesStateBranch.dialogId,
-        currentMessagesStateBranch.messagesList,
+      currentMessagesList.messagesList = [];
+      replaceMessagesListForDialog(
+        state.messageLists,
+        currentMessagesList.dialogId,
+        currentMessagesList.messagesList,
       );
     },
-    deletingChat(state, action) {
-      const result = [...state.messagesState].filter(
+    deletingMessagesListForDialog(state, action) {
+      const result = [...state.messageLists].filter(
         el => el.dialogId !== action.payload,
       );
-      state.messagesState = result;
+      state.messageLists = result;
+    },
+    forwardingMessages(state, action) {
+      state.chosenMessageForForwarding = action.payload;
     },
   },
 });
 
 export const {
-  creatingChat,
+  creatingMessageListForDialog,
   creatingMessages,
   editingMessages,
   cleaningMessages,
   cleaningAllMessages,
-  deletingChat,
+  deletingMessagesListForDialog,
+  forwardingMessages,
 } = messagesSlice.actions;
 
 export const {reducer: messagesReducer} = messagesSlice;

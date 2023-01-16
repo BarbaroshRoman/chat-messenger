@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   Text,
   View,
@@ -16,14 +16,17 @@ import {
   cleaningAllMessages,
   cleaningMessages,
   editingMessages,
-} from './redux/messages/messagesSlice';
-import {HeaderComponent} from './components/HeaderComponent';
-import {MessageView} from './components/MessageView';
-import {InputView} from './components/InputView';
-import {creatingMessages} from './redux/messages/messagesSlice';
-import {findMessagesStateBranch} from './helpers/currentMessagesStateBranch';
+  forwardingMessages,
+} from '../redux/messages/messagesSlice';
+import {HeaderComponent} from '../components/HeaderComponent';
+import {MessageView} from '../components/MessageView';
+import {InputView} from '../components/InputView';
+import {creatingMessages} from '../redux/messages/messagesSlice';
+import {findMessagesListForDialog} from '../helpers/findMessagesListForDialog';
+import {navigationPages} from '../navigation/components/navigationPages';
+import {ActionOnMessageView} from '../components/ActionOnMessageView';
 
-const ChatScreen = () => {
+export const ChatScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const flatRef = useRef(null);
@@ -35,12 +38,19 @@ const ChatScreen = () => {
   const [chosenMessageForHeader, setChosenMessageForHeader] = useState({});
   const [inputValue, setInputValue] = useState('');
 
-  const messagesState = useSelector(state => state.messages.messagesState);
+  const messageLists = useSelector(state => state.messages.messageLists);
+  const chosenMessageForForwarding = useSelector(
+    state => state.messages.chosenMessageForForwarding,
+  );
 
-  const currentMessagesStateBranch = findMessagesStateBranch(
-    messagesState,
+  const currentMessagesList = findMessagesListForDialog(
+    messageLists,
     route.params.dialogId,
   );
+
+  useEffect(() => {
+    setChosenMessage(chosenMessageForForwarding);
+  }, [chosenMessageForForwarding]);
 
   const onTouchMessage = item => {
     openBottomSheet();
@@ -77,8 +87,6 @@ const ChatScreen = () => {
           }),
         );
       }
-      setChosenMessage({});
-      setInputValue('');
     } else if (inputValue !== '') {
       const date = new Date();
       const hours = date.getHours();
@@ -92,8 +100,9 @@ const ChatScreen = () => {
         messageId: new Date(),
       };
 
-      if (chosenMessage.isResend) {
-        newMessage.resended = chosenMessage.isResend;
+      if (chosenMessage.isResend || chosenMessage.sentToAnotherDialog) {
+        newMessage.resended = true;
+        newMessage.resendedDialogName = chosenMessage.dialogName;
         newMessage.resendedMessage = chosenMessage.message;
       }
 
@@ -103,18 +112,18 @@ const ChatScreen = () => {
           dialogId: route.params.dialogId,
         }),
       );
-
-      setChosenMessage({});
-      setInputValue('');
+      dispatch(forwardingMessages({}));
     }
+    setChosenMessage({});
+    setInputValue('');
   };
 
   const deleteMessageHelper = () => {
-    const currentChosenMessage = chosenMessage.message
+    const resultChosenMessage = chosenMessage.message
       ? chosenMessage
       : chosenMessageForHeader;
-    const newState = [...currentMessagesStateBranch.messagesList];
-    const result = newState.filter(el => el !== currentChosenMessage);
+    const newState = [...currentMessagesList.messagesList];
+    const result = newState.filter(el => el !== resultChosenMessage);
     dispatch(
       cleaningMessages({
         updatedMessagesList: result,
@@ -129,9 +138,13 @@ const ChatScreen = () => {
     }
   };
 
-  const resendMessage = () => {
-    const newItem = {...chosenMessage};
+  const replyToMessage = () => {
+    const resultChosenMessage = chosenMessage.message
+      ? chosenMessage
+      : chosenMessageForHeader;
+    const newItem = {...resultChosenMessage};
     newItem.isResend = true;
+    newItem.dialogName = route.params.dialogName;
     setChosenMessage(newItem);
     closeBottomSheet();
   };
@@ -143,11 +156,26 @@ const ChatScreen = () => {
   };
 
   const editMessage = () => {
-    const newItem = {...chosenMessage};
+    const resultChosenMessage = chosenMessage.message
+      ? chosenMessage
+      : chosenMessageForHeader;
+    const newItem = {...resultChosenMessage};
     newItem.inAStateOfEdit = true;
     setChosenMessage(newItem);
     closeBottomSheet();
-    setInputValue(chosenMessage.message);
+    setInputValue(resultChosenMessage.message);
+  };
+
+  const forwardMessage = () => {
+    const resultChosenMessage = chosenMessage.message
+      ? chosenMessage
+      : chosenMessageForHeader;
+    const newItem = {...resultChosenMessage};
+    newItem.sentToAnotherDialog = true;
+    newItem.dialogName = route.params.dialogName;
+    dispatch(forwardingMessages(newItem));
+    closeBottomSheet();
+    navigation.navigate(navigationPages.HOME);
   };
 
   const cleanMessages = () =>
@@ -178,13 +206,7 @@ const ChatScreen = () => {
       },
     ]);
 
-  const renderMessage = ({item}) => {
-    const onDrawerSnap = () => {
-      const newItem = {...item};
-      newItem.isResend = true;
-      setChosenMessage(newItem);
-    };
-
+  const renderMessagesList = ({item}) => {
     return (
       <>
         <View style={styles.iconSendOn}>
@@ -194,8 +216,7 @@ const ChatScreen = () => {
           item={item}
           onTouchMessage={onTouchMessage}
           setChosenMessageForHeader={setChosenMessageForHeader}
-          onDrawerSnap={onDrawerSnap}
-          dialogName={route.params.dialogName}
+          setChosenMessage={setChosenMessage}
         />
       </>
     );
@@ -210,12 +231,16 @@ const ChatScreen = () => {
         goBackHandler={goBackHandler}
         closeModalHeaderMenu={closeModalHeaderMenu}
         openModalHeaderMenu={openModalHeaderMenu}
-        currentMessagesStateBranch={currentMessagesStateBranch}
+        currentMessagesList={currentMessagesList}
         cleanMessages={cleanMessages}
         modalHeaderMenu={modalHeaderMenu}
         chosenItem={chosenMessageForHeader}
-        setChosenItem={setChosenMessageForHeader}
+        setChosenItem={setChosenMessage}
         deleteItem={deleteMessage}
+        forwardMessage={forwardMessage}
+        editMessage={editMessage}
+        replyToMessage={replyToMessage}
+        chosenMessageForForwarding={false}
       />
       <BottomSheet
         visible={modalVisible}
@@ -237,7 +262,7 @@ const ChatScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonsModal]}
-            onPress={resendMessage}>
+            onPress={replyToMessage}>
             <Icon
               size={32}
               name="arrow-undo-outline"
@@ -248,6 +273,21 @@ const ChatScreen = () => {
             />
             <View style={styles.containerDeleteText}>
               <Text style={styles.modalText}>Ответить</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.buttonsModal]}
+            onPress={forwardMessage}>
+            <Icon
+              size={32}
+              name="arrow-redo-outline"
+              type="ionicon"
+              color={'white'}
+              marginVertical={10}
+              marginRight={10}
+            />
+            <View style={styles.containerDeleteText}>
+              <Text style={styles.modalText}>Переслать</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonsModal} onPress={deleteMessage}>
@@ -266,31 +306,29 @@ const ChatScreen = () => {
         </View>
       </BottomSheet>
       <View style={styles.chat}>
-        <FlatList
-          ref={flatRef}
-          onContentSizeChange={() => flatRef.current.scrollToEnd()}
-          contentContainerStyle={styles.flatListContainer}
-          data={currentMessagesStateBranch.messagesList}
-          renderItem={renderMessage}
-          keyExtractor={item => item.message + item.date + Math.random()}
-        />
-      </View>
-      {chosenMessage.isResend && (
-        <View style={styles.resendMessage}>
-          <View style={styles.iconArrow}>
-            <Icon name="arrow-redo-outline" type="ionicon" color="#f50" />
+        {currentMessagesList.messagesList.length ? (
+          <FlatList
+            ref={flatRef}
+            onContentSizeChange={() => flatRef.current.scrollToEnd()}
+            contentContainerStyle={styles.flatListContainer}
+            data={currentMessagesList.messagesList}
+            renderItem={renderMessagesList}
+            keyExtractor={item => item.message + item.date + Math.random()}
+          />
+        ) : (
+          <View style={styles.emptyMessagesList}>
+            <Text style={styles.emptyMessagesListText}>
+              История сообщений пуста
+            </Text>
           </View>
-          <Text>{route.params.dialogName}</Text>
-          <Text style={styles.resendText} numberOfLines={1}>
-            {chosenMessage.message}
-          </Text>
-          <TouchableOpacity
-            activeOpacity={0.6}
-            onPress={() => setChosenMessage({})}>
-            <Icon name="close-outline" type="ionicon" color="white" />
-          </TouchableOpacity>
-        </View>
-      )}
+        )}
+      </View>
+      <ActionOnMessageView
+        chosenMessage={chosenMessage}
+        setChosenMessage={setChosenMessage}
+        setInputValue={setInputValue}
+        dialogName={route.params.dialogName}
+      />
       <InputView
         sendMessage={sendMessage}
         inputValue={inputValue}
@@ -330,22 +368,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#0a6fc2',
     borderWidth: 4,
   },
-  resendMessage: {
-    flexDirection: 'row',
-    backgroundColor: '#21252b',
-    padding: 6,
-  },
-  resendText: {
-    flex: 1,
-    color: '#fff',
-    fontSize: 18,
-    paddingTop: 2,
-    marginRight: 30,
-  },
-  iconArrow: {
-    justifyContent: 'center',
-    paddingRight: 6,
-  },
   flatListContainer: {
     alignItems: 'flex-end',
   },
@@ -357,6 +379,13 @@ const styles = StyleSheet.create({
     right: 4,
     top: 4,
   },
+  emptyMessagesList: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyMessagesListText: {
+    color: 'white',
+    fontSize: 16,
+  },
 });
-
-export default ChatScreen;
