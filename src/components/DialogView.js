@@ -10,20 +10,19 @@ export const DialogView = props => {
         onPress={() => props.goToPage(props.item)}
         onLongPress={() => props.setChosenDialog(props.item)}>
         <View>
-          <Text style={styles.dialogName}>{props.item.dialogName}</Text>
-          {props.currentMessagesStateBranch.messagesList.length ? (
+          <Text style={styles.dialogNameText} numberOfLines={1}>
+            {props.item.dialogName}
+          </Text>
+          {props.currentMessagesList.messagesList.length ? (
             <View>
-              <Text style={styles.dialogText} numberOfLines={1}>
+              <Text style={styles.lastMessageText} numberOfLines={1}>
                 {
-                  props.currentMessagesStateBranch.messagesList[props.lastIndex]
+                  props.currentMessagesList.messagesList[props.lastIndex]
                     .message
                 }
               </Text>
               <Text style={styles.dialogDate}>
-                {
-                  props.currentMessagesStateBranch.messagesList[props.lastIndex]
-                    .date
-                }
+                {props.currentMessagesList.messagesList[props.lastIndex].date}
               </Text>
             </View>
           ) : (
@@ -42,12 +41,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: 'gray',
   },
-  dialogName: {
-    marginLeft: 20,
+  dialogNameText: {
+    paddingLeft: 10,
     color: 'white',
-    fontSize: 24,
+    fontSize: 20,
   },
-  dialogText: {
+  lastMessageText: {
     color: '#d9d9d9',
     fontSize: 20,
     paddingRight: 50,
@@ -56,7 +55,7 @@ const styles = StyleSheet.create({
   dialogDate: {
     alignSelf: 'flex-end',
     color: 'white',
-    fontSize: 18,
+    fontSize: 14,
     marginRight: 4,
   },
   emptyMessageText: {

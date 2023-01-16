@@ -7,10 +7,10 @@ const dialogsSlice = createSlice({
   initialState: DialogsInitialState,
   reducers: {
     creatingDialog(state, action) {
-      state.dialogsState.push(action.payload);
+      state.dialogsList.push(action.payload);
     },
     deletingDialog(state, action) {
-      state.dialogsState = action.payload;
+      state.dialogsList = action.payload;
     },
   },
 });

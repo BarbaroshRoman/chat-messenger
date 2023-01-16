@@ -1,3 +1,4 @@
 export const MessagesInitialState = {
-  messagesState: [],
+  messageLists: [],
+  chosenMessageForForwarding: {},
 };

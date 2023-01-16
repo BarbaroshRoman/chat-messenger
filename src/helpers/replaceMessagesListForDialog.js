@@ -1,4 +1,4 @@
-export const replaceMessagesStateBranch = (
+export const replaceMessagesListForDialog = (
   state,
   currentDialogId,
   currentMessagesList,
