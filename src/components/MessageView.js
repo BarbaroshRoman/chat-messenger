@@ -5,7 +5,7 @@ export const MessageView = props => {
   return (
     <View>
       <TouchableHighlight
-        style={styles.messageItemContainer}
+        style={styles.messageContainer}
         underlayColor={'#7d889b'}
         onPress={() => props.onTouchMessage(props.item)}
         onLongPress={() => {
@@ -42,17 +42,15 @@ export const MessageView = props => {
 };
 
 const styles = StyleSheet.create({
-  messageItemContainer: {
+  messageContainer: {
     backgroundColor: '#636e83',
     paddingVertical: 4,
-    minWidth: '35%',
+    minWidth: '36%',
     paddingHorizontal: 4,
     borderBottomLeftRadius: 8,
     borderTopLeftRadius: 8,
     borderBottomRightRadius: 8,
     margin: 4,
-    borderColor: '#999999',
-    borderWidth: 2,
     marginLeft: 60,
     alignSelf: 'flex-end',
   },
@@ -63,6 +61,7 @@ const styles = StyleSheet.create({
   },
   messageDateText: {
     color: '#fff',
+    fontSize: 12,
   },
   notAbsoluteDate: {
     flexDirection: 'row',
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
     paddingEnd: 40,
   },
   tableOfContents: {
-    color: '#ff884d',
+    color: '#ff661a',
     fontSize: 18,
   },
   editedMessageLabel: {

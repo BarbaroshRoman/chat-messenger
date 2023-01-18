@@ -209,9 +209,16 @@ export const ChatScreen = () => {
   const renderMessagesList = ({item}) => {
     return (
       <>
-        <View style={styles.iconSendOn}>
-          <Icon name="arrow-redo-outline" type="ionicon" color="#fff" />
-        </View>
+        {chosenMessageForHeader === item && (
+          <View style={styles.checkmarkSharpIcon}>
+            <Icon
+              name="checkmark-sharp"
+              type="ionicon"
+              color="#00cc00"
+              size={30}
+            />
+          </View>
+        )}
         <MessageView
           item={item}
           onTouchMessage={onTouchMessage}
@@ -374,10 +381,10 @@ const styles = StyleSheet.create({
   cleanMessages: {
     color: 'white',
   },
-  iconSendOn: {
+  checkmarkSharpIcon: {
     position: 'absolute',
-    right: 4,
-    top: 4,
+    right: '90%',
+    top: 6,
   },
   emptyMessagesList: {
     flex: 1,

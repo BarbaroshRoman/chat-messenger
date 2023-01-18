@@ -164,14 +164,13 @@ export const HeaderComponent = props => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#353b45',
+    backgroundColor: '#2c313a',
     height: 50,
   },
   leftIcon: {
     justifyContent: 'center',
     padding: 8,
     marginVertical: 4,
-    borderColor: '#646f82',
     marginRight: 10,
   },
   actionOnMessageButtons: {
@@ -191,7 +190,6 @@ const styles = StyleSheet.create({
   iconEllipsisVertical: {
     padding: 8,
     marginVertical: 4,
-    borderColor: '#646f82',
     marginLeft: 20,
   },
   modalView: {
