@@ -10,6 +10,7 @@ import {
   FlatList,
   Alert,
   Modal,
+  StatusBar,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -23,11 +24,15 @@ import {
   deletingMessagesListForDialog,
 } from '../redux/messages/messagesSlice';
 import {findMessagesListForDialog} from '../helpers/findMessagesListForDialog';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const flatRef = useRef(null);
+
+  SystemNavigationBar.setNavigationColor('#353b45', 'dark');
+  SystemNavigationBar.setBarMode('light', 'status');
 
   const dialogsList = useSelector(state => state.dialogs.dialogsList);
   const messageLists = useSelector(state => state.messages.messageLists);
@@ -122,6 +127,7 @@ export const HomeScreen = () => {
 
   return (
     <View style={styles.container} onTouchEnd={() => setChosenDialog({})}>
+      <StatusBar backgroundColor="#353b45" />
       <View style={styles.dialogsContainer}>
         <HeaderComponent
           title={'Список диалогов'}
