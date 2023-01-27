@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  LogBox,
 } from 'react-native';
 import {BottomSheet} from 'react-native-btr';
 import {Icon} from '@rneui/themed';
@@ -25,6 +26,7 @@ import {creatingMessages} from '../redux/messages/messagesSlice';
 import {findMessagesListForDialog} from '../helpers/findMessagesListForDialog';
 import {navigationPages} from '../navigation/components/navigationPages';
 import {ActionOnMessageView} from '../components/ActionOnMessageView';
+import {dialogsSorting} from '../redux/dialogs/dialogsSlice';
 
 export const ChatScreen = () => {
   const navigation = useNavigation();
@@ -51,6 +53,23 @@ export const ChatScreen = () => {
   useEffect(() => {
     setChosenMessage(chosenMessageForForwarding);
   }, [chosenMessageForForwarding]);
+
+  useEffect(() => {
+    const lastIndex = currentMessagesList.messagesList.length - 1;
+    const lastMessageId = currentMessagesList.messagesList.length
+      ? currentMessagesList.messagesList[lastIndex].messageId
+      : null;
+    dispatch(
+      dialogsSorting({
+        dialogId: route.params.dialogId,
+        lastMessageId: lastMessageId,
+      }),
+    );
+  });
+
+  LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+  ]);
 
   const onTouchMessage = item => {
     openBottomSheet();
@@ -97,7 +116,7 @@ export const ChatScreen = () => {
       const newMessage = {
         message: inputValue.trim(),
         date: formatDate,
-        messageId: new Date(),
+        messageId: Date.now(),
       };
 
       if (chosenMessage.isResend || chosenMessage.sentToAnotherDialog) {

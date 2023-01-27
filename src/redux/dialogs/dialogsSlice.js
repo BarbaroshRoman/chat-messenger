@@ -7,14 +7,26 @@ const dialogsSlice = createSlice({
   initialState: DialogsInitialState,
   reducers: {
     creatingDialog(state, action) {
-      state.dialogsList.push(action.payload);
+      state.dialogsList.unshift(action.payload);
     },
     deletingDialog(state, action) {
       state.dialogsList = action.payload;
     },
+    dialogsSorting(state, action) {
+      state.dialogsList.find(el => {
+        if (el.dialogId === action.payload.dialogId) {
+          el.lastMessageId = new Date(action.payload.lastMessageId);
+        }
+      });
+      state.dialogsList = [...state.dialogsList].sort(
+        (a, b) => a.lastMessageId - b.lastMessageId,
+      );
+      state.dialogsList = [...state.dialogsList].reverse();
+    },
   },
 });
 
-export const {creatingDialog, deletingDialog} = dialogsSlice.actions;
+export const {creatingDialog, deletingDialog, dialogsSorting} =
+  dialogsSlice.actions;
 
 export const {reducer: dialogsReducer} = dialogsSlice;
