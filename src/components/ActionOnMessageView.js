@@ -4,6 +4,7 @@ import {Icon} from '@rneui/base';
 import {useDispatch} from 'react-redux';
 
 import {forwardingMessages} from '../redux/messages/messagesSlice';
+import {COLORS} from '../resources/colors';
 
 export const ActionOnMessageView = props => {
   const dispatch = useDispatch();
@@ -15,13 +16,13 @@ export const ActionOnMessageView = props => {
           <Icon
             name="arrow-redo-outline"
             type="ionicon"
-            color="#f50"
+            color={COLORS.orangeRed}
             size={30}
           />
         </View>
         <View style={styles.messageWithDialogName}>
           <Text
-            style={(styles.dialogNameText, {color: '#f50'})}
+            style={(styles.dialogNameText, {color: COLORS.orangeRed})}
             numberOfLines={1}>
             {props.dialogName}
           </Text>
@@ -47,13 +48,13 @@ export const ActionOnMessageView = props => {
           <Icon
             name="pencil-outline"
             type="ionicon"
-            color="#00cc00"
+            color={COLORS.limeGreen}
             size={30}
           />
         </View>
         <View style={styles.messageWithDialogName}>
           <Text
-            style={(styles.dialogNameText, {color: '#00cc00'})}
+            style={(styles.dialogNameText, {color: COLORS.limeGreen})}
             numberOfLines={1}>
             {props.dialogName}
           </Text>
@@ -85,7 +86,7 @@ export const ActionOnMessageView = props => {
         </View>
         <View style={styles.messageWithDialogName}>
           <Text
-            style={(styles.dialogNameText, {color: '#f50'})}
+            style={(styles.dialogNameText, {color: COLORS.orangeRed})}
             numberOfLines={1}>
             {props.chosenMessage.dialogName}
           </Text>
@@ -110,7 +111,7 @@ export const ActionOnMessageView = props => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#21252b',
+    backgroundColor: COLORS.charcoal,
     padding: 6,
   },
   actionIcon: {
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   messageText: {
-    color: '#fff',
+    color: COLORS.lavender,
     fontSize: 18,
   },
   closeViewButton: {

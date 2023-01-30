@@ -1,6 +1,7 @@
 import React from 'react';
 import {Icon} from '@rneui/themed';
 import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {COLORS} from '../resources/colors';
 
 export const InputView = props => {
   return (
@@ -10,7 +11,7 @@ export const InputView = props => {
         value={props.inputValue}
         onChangeText={props.setInputValue}
         placeholder="Написать сообщение..."
-        placeholderTextColor="#c5cad3"
+        placeholderTextColor={COLORS.lavender}
         multiline
       />
       <TouchableOpacity activeOpacity={0.5} onPress={props.sendMessage}>
@@ -19,7 +20,7 @@ export const InputView = props => {
           style={styles.iconSend}
           name="send-outline"
           type="ionicon"
-          color={'#9fc4c6'}
+          color={COLORS.lightBlue}
         />
       </TouchableOpacity>
     </View>
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#353b45',
+    backgroundColor: COLORS.charcoal,
     paddingRight: 2,
   },
   input: {

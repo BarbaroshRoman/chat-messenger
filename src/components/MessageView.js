@@ -1,17 +1,15 @@
 import React from 'react';
 import {StyleSheet, Text, View, TouchableHighlight} from 'react-native';
+import {COLORS} from '../resources/colors';
 
 export const MessageView = props => {
   return (
     <View>
       <TouchableHighlight
         style={styles.messageContainer}
-        underlayColor={'#7d889b'}
+        underlayColor={COLORS.lightSteelBlue}
         onPress={() => props.onTouchMessage(props.item)}
-        onLongPress={() => {
-          props.setChosenMessageForHeader(props.item);
-          props.setChosenMessage({});
-        }}>
+        onLongPress={() => props.setChosenMessageForHeader(props.item)}>
         <>
           {props.item.resended ? (
             <View style={styles.messageResendLabel}>
@@ -43,7 +41,7 @@ export const MessageView = props => {
 
 const styles = StyleSheet.create({
   messageContainer: {
-    backgroundColor: '#636e83',
+    backgroundColor: COLORS.steelBlue,
     paddingVertical: 4,
     minWidth: '36%',
     paddingHorizontal: 4,
@@ -56,11 +54,11 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 18,
-    color: '#fff',
+    color: 'white',
     paddingLeft: 2,
   },
   messageDateText: {
-    color: '#fff',
+    color: 'white',
     fontSize: 12,
   },
   notAbsoluteDate: {
@@ -76,18 +74,19 @@ const styles = StyleSheet.create({
   },
   messageResendLabel: {
     borderLeftWidth: 4,
-    borderColor: '#5f9ea0',
+    borderColor: COLORS.lightSteelBlue,
     paddingLeft: 4,
   },
   messageResendText: {
-    color: '#fff',
+    color: 'white',
     paddingEnd: 40,
   },
   tableOfContents: {
-    color: '#ff661a',
+    color: COLORS.lightSteelBlue,
     fontSize: 18,
   },
   editedMessageLabel: {
-    color: '#d9d9d9',
+    color: COLORS.lavender,
+    fontSize: 12,
   },
 });

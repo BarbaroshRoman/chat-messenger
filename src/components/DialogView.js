@@ -1,12 +1,13 @@
 import React from 'react';
 import {StyleSheet, Text, View, TouchableHighlight} from 'react-native';
+import {COLORS} from '../resources/colors';
 
 export const DialogView = props => {
   return (
     <View>
       <TouchableHighlight
         style={styles.dialogButton}
-        underlayColor={'#7d889b'}
+        underlayColor={COLORS.lightSteelBlue}
         onPress={() => props.goToPage(props.item)}
         onLongPress={() => props.setChosenDialog(props.item)}>
         <View>
@@ -43,11 +44,11 @@ const styles = StyleSheet.create({
   },
   dialogNameText: {
     paddingLeft: 10,
-    color: 'white',
+    color: COLORS.lavender,
     fontSize: 20,
   },
   lastMessageText: {
-    color: '#d9d9d9',
+    color: 'white',
     fontSize: 20,
     paddingRight: 50,
     paddingLeft: 10,
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   emptyMessageText: {
-    color: '#d9d9d9',
+    color: 'white',
     fontSize: 20,
     paddingRight: 50,
     paddingLeft: 10,

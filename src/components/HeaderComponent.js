@@ -4,6 +4,7 @@ import {Icon} from '@rneui/base';
 import {useDispatch} from 'react-redux';
 
 import {forwardingMessages} from '../redux/messages/messagesSlice';
+import {COLORS} from '../resources/colors';
 
 export const HeaderComponent = props => {
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ export const HeaderComponent = props => {
               size={26}
               name="arrow-back-outline"
               type="ionicon"
-              color={'#9fc4c6'}
+              color={COLORS.lightBlue}
             />
           </TouchableOpacity>
         </View>
@@ -30,7 +31,7 @@ export const HeaderComponent = props => {
               size={26}
               name="list-outline"
               type="ionicon"
-              color={'#9fc4c6'}
+              color={COLORS.lightBlue}
             />
           </TouchableOpacity>
         </View>
@@ -43,7 +44,7 @@ export const HeaderComponent = props => {
                 size={24}
                 name="trash-outline"
                 type="ionicon"
-                color={'#ff1a1a'}
+                color={'red'}
                 padding={6}
               />
             </View>
@@ -118,7 +119,7 @@ export const HeaderComponent = props => {
                   paddingLeft={4}
                   name="trash-outline"
                   type="ionicon"
-                  color={'#9fc4c6'}
+                  color={COLORS.lightBlue}
                   paddingRight={4}
                 />
               </View>
@@ -134,7 +135,7 @@ export const HeaderComponent = props => {
                   paddingLeft={4}
                   name="chatbubbles-outline"
                   type="ionicon"
-                  color={'#9fc4c6'}
+                  color={COLORS.lightBlue}
                   paddingRight={4}
                 />
               </View>
@@ -152,7 +153,7 @@ export const HeaderComponent = props => {
               size={26}
               name="ellipsis-vertical"
               type="ionicon"
-              color={'#9fc4c6'}
+              color={COLORS.lightBlue}
             />
           </TouchableOpacity>
         </View>
@@ -164,8 +165,10 @@ export const HeaderComponent = props => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#2c313a',
+    backgroundColor: COLORS.arsenic,
     height: 50,
+    borderBottomWidth: 0.5,
+    borderColor: COLORS.paynesGreyDark,
   },
   leftIcon: {
     justifyContent: 'center',
@@ -201,7 +204,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     elevation: 20,
-    backgroundColor: '#353b45',
+    backgroundColor: COLORS.arsenic,
   },
   createDialogText: {
     alignSelf: 'center',
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     elevation: 20,
-    backgroundColor: '#353b45',
+    backgroundColor: COLORS.arsenic,
   },
   cleanMessagesText: {
     alignSelf: 'center',

@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {
   View,
@@ -25,14 +25,12 @@ import {
 } from '../redux/messages/messagesSlice';
 import {findMessagesListForDialog} from '../helpers/findMessagesListForDialog';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
+import {COLORS} from '../resources/colors';
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const flatRef = useRef(null);
-
-  SystemNavigationBar.setNavigationColor('#353b45', 'dark');
-  SystemNavigationBar.setBarMode('light', 'status');
 
   const dialogsList = useSelector(state => state.dialogs.dialogsList);
   const messageLists = useSelector(state => state.messages.messageLists);
@@ -45,6 +43,10 @@ export const HomeScreen = () => {
   const [modalHeaderMenu, setModalHeaderMenu] = useState(false);
 
   const [chosenDialog, setChosenDialog] = useState({});
+
+  useEffect(() => {
+    SystemNavigationBar.setBarMode('dark', 'status');
+  }, []);
 
   const closeModalCreatingDialog = () => {
     setModalCreatingDialog(false);
@@ -96,6 +98,10 @@ export const HomeScreen = () => {
     setChosenDialog({});
   };
 
+  // const pinDialog = () => {
+
+  // };
+
   const deleteDialog = dialogName =>
     Alert.alert('Удалить чат', `Вы хотите удалить чат с ${dialogName}?`, [
       {
@@ -127,7 +133,7 @@ export const HomeScreen = () => {
 
   return (
     <View style={styles.container} onTouchEnd={() => setChosenDialog({})}>
-      <StatusBar backgroundColor="#353b45" />
+      <StatusBar backgroundColor={COLORS.arsenic} />
       <View style={styles.dialogsContainer}>
         <HeaderComponent
           title={'Список диалогов'}
@@ -197,7 +203,7 @@ const styles = StyleSheet.create({
   },
   dialogsContainer: {
     flex: 1,
-    backgroundColor: '#636e83',
+    backgroundColor: COLORS.charcoal,
   },
   emptyDialogListDescription: {
     flex: 1,
@@ -210,17 +216,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   inputModal: {
-    fontSize: 18,
+    fontSize: 16,
     paddingLeft: 6,
     marginVertical: 2,
     borderTopWidth: 1,
     borderBottomWidth: 1,
     color: 'white',
     borderColor: 'white',
-    fontStyle: 'italic',
   },
   modalDialogContainer: {
-    backgroundColor: '#2c313a',
+    backgroundColor: COLORS.paynesGrey,
     marginTop: '50%',
     paddingVertical: 15,
     paddingHorizontal: 16,
@@ -241,7 +246,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   cancelButton: {
-    backgroundColor: '#e60000',
+    backgroundColor: COLORS.fireBrick,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 4,
@@ -252,7 +257,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   createButton: {
-    backgroundColor: '#52527a',
+    backgroundColor: COLORS.cyberGrape,
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginRight: 14,
@@ -265,7 +270,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-/*
-при последнем отправленном сообщении, диалог должен быть в начале;
- */
