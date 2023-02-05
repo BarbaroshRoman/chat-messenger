@@ -12,4 +12,7 @@ export const COLORS = {
   lightBlue: '#ADD8E6',
   lightSteelBlue: '#B0C4DE',
   steelBlue: '#4682B4',
+  black: "#000",
+  white: "#fff",
+  darkslategrey: "darkslategrey"
 };

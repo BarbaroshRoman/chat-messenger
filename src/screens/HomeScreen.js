@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import {
   StatusBar,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import {Icon} from '@rneui/base';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 import {navigationPages} from '../navigation/components/navigationPages';
 import {creatingDialog} from '../redux/dialogs/dialogsSlice';
@@ -24,13 +26,13 @@ import {
   deletingMessagesListForDialog,
 } from '../redux/messages/messagesSlice';
 import {findMessagesListForDialog} from '../helpers/findMessagesListForDialog';
-import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {COLORS} from '../resources/colors';
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const flatRef = useRef(null);
+  const isFocused = useIsFocused();
 
   const dialogsList = useSelector(state => state.dialogs.dialogsList);
   const messageLists = useSelector(state => state.messages.messageLists);
@@ -44,9 +46,13 @@ export const HomeScreen = () => {
 
   const [chosenDialog, setChosenDialog] = useState({});
 
+  const init = async () => {
+    await SystemNavigationBar.setNavigationColor(COLORS.charcoal, "dark", "both");
+  }
+
   useEffect(() => {
-    SystemNavigationBar.setBarMode('dark', 'status');
-  }, []);
+    isFocused && init()
+  }, [isFocused]);
 
   const closeModalCreatingDialog = () => {
     setModalCreatingDialog(false);
@@ -121,19 +127,30 @@ export const HomeScreen = () => {
     );
     const lastIndex = currentMessagesList.messagesList.length - 1;
     return (
-      <DialogView
-        item={item}
-        setChosenDialog={setChosenDialog}
-        goToPage={goToPage}
-        currentMessagesList={currentMessagesList}
-        lastIndex={lastIndex}
-      />
+      <>
+        {chosenDialog === item && (
+          <View style={styles.checkmarkSharpIcon}>
+            <Icon
+              name="checkmark-sharp"
+              type="ionicon"
+              color={COLORS.limeGreen}
+              size={30}
+            />
+          </View>
+        )}
+        <DialogView
+          item={item}
+          setChosenDialog={setChosenDialog}
+          goToPage={goToPage}
+          currentMessagesList={currentMessagesList}
+          lastIndex={lastIndex}
+        />
+      </>
     );
   };
 
   return (
     <View style={styles.container} onTouchEnd={() => setChosenDialog({})}>
-      <StatusBar backgroundColor={COLORS.arsenic} />
       <View style={styles.dialogsContainer}>
         <HeaderComponent
           title={'Список диалогов'}
@@ -268,5 +285,9 @@ const styles = StyleSheet.create({
   createText: {
     color: 'white',
     fontSize: 16,
+  },
+  checkmarkSharpIcon: {
+    alignSelf: 'flex-end',
+    position: 'absolute',
   },
 });

@@ -13,7 +13,11 @@ export const ChatStackComponent = () => {
       initialRouteName={navigationPages.HOME}
       screenOptions={{headerShown: false}}>
       <ChatStack.Screen name={navigationPages.HOME} component={HomeScreen} />
-      <ChatStack.Screen name={navigationPages.CHAT} component={ChatScreen} />
+      <ChatStack.Screen
+        name={navigationPages.CHAT}
+        component={ChatScreen}
+        options={{animation: 'slide_from_right', animationDuration: 300}}
+      />
     </ChatStack.Navigator>
   );
 };

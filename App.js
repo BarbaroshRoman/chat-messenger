@@ -4,11 +4,13 @@ import {PersistGate} from 'redux-persist/integration/react';
 
 import {RootStackContainer} from './src/navigation/RootStackContainer';
 import {store, persistor} from './src/store/store';
+import {StatusBar} from "react-native";
 
 const App = () => {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
+          <StatusBar backgroundColor={"darkslategrey"} animated={true}/>
         <RootStackContainer />
       </PersistGate>
     </Provider>

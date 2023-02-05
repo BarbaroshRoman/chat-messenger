@@ -25,9 +25,10 @@ import {InputView} from '../components/InputView';
 import {creatingMessages} from '../redux/messages/messagesSlice';
 import {findMessagesListForDialog} from '../helpers/findMessagesListForDialog';
 import {navigationPages} from '../navigation/components/navigationPages';
-import {ActionOnMessageView} from '../components/ActionOnMessageView';
+import {ClipboardMessageContainer} from '../components/ClipboardMessageContainer';
 import {dialogsSorting} from '../redux/dialogs/dialogsSlice';
 import {COLORS} from '../resources/colors';
+import {createDate} from '../helpers/createDate';
 
 export const ChatScreen = () => {
   const navigation = useNavigation();
@@ -56,17 +57,18 @@ export const ChatScreen = () => {
   }, [chosenMessageForForwarding]);
 
   useEffect(() => {
-    const lastIndex = currentMessagesList.messagesList.length - 1;
-    const lastMessageId = currentMessagesList.messagesList.length
-      ? currentMessagesList.messagesList[lastIndex].messageId
-      : null;
-    dispatch(
-      dialogsSorting({
-        dialogId: route.params.dialogId,
-        lastMessageId: lastMessageId,
-      }),
-    );
-  });
+
+      const lastIndex = currentMessagesList.messagesList.length - 1;
+      const lastMessageId = currentMessagesList.messagesList.length
+          ? currentMessagesList.messagesList[lastIndex].messageId
+          : null;
+      dispatch(
+          dialogsSorting({
+            dialogId: route.params.dialogId,
+            lastMessageId: lastMessageId,
+          }),
+      );
+  }, [dispatch, currentMessagesList]);
 
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -93,46 +95,76 @@ export const ChatScreen = () => {
     setModalHeaderMenu(true);
   };
 
-  const addZero = datePart =>
-    +datePart < 10 ? `0${datePart}` : datePart.toString();
-
-  const sendMessage = () => {
-    if (inputValue !== '' && chosenMessage.inAStateOfEdit) {
-      if (inputValue !== chosenMessage.message) {
-        chosenMessage.message = inputValue.trim();
-        dispatch(
-          editingMessages({
-            editedMessage: chosenMessage,
-            dialogId: route.params.dialogId,
-          }),
-        );
-      }
-    } else if (inputValue !== '') {
-      const date = new Date();
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-
-      const formatDate = addZero(hours) + ':' + addZero(minutes);
-
-      const newMessage = {
-        message: inputValue.trim(),
-        date: formatDate,
-        messageId: Date.now(),
-      };
-
-      if (chosenMessage.isResend || chosenMessage.sentToAnotherDialog) {
-        newMessage.resended = true;
-        newMessage.resendedDialogName = chosenMessage.dialogName;
-        newMessage.resendedMessage = chosenMessage.message;
-      }
-
-      dispatch(
+  const createNewMessage = (newMessage) => {
+    dispatch(
         creatingMessages({
           newMessage: newMessage,
           dialogId: route.params.dialogId,
         }),
+    );
+    dispatch(forwardingMessages({}));
+  }
+
+  const sentChosenMesToAnotherDialog = () => {
+    const resultResendedMessage = chosenMessage.message
+        ? chosenMessage.message
+        : chosenMessage.resendedMessage;
+
+    const newMessage = {
+      date: createDate(),
+      messageId: Date.now(),
+      resended: true,
+      resendedDialogName: chosenMessage.resendedDialogName,
+      resendedMessage: resultResendedMessage,
+    };
+    createNewMessage(newMessage);
+  }
+
+  const editingMessage = () => {
+    if (inputValue !== chosenMessage.message) {
+      chosenMessage.message = inputValue.trim();
+      dispatch(
+          editingMessages({
+            editedMessage: chosenMessage,
+            dialogId: route.params.dialogId,
+          }),
       );
-      dispatch(forwardingMessages({}));
+    }
+  }
+
+  const sendSimpleMessage = () => {
+    const newMessage = {
+      message: inputValue.trim(),
+      date: createDate(),
+      messageId: Date.now(),
+    };
+
+    if (chosenMessage.isResend || chosenMessage.sentToAnotherDialog) {
+      const resultResendedMessage = chosenMessage.message
+          ? chosenMessage.message
+          : chosenMessage.resendedMessage;
+
+      newMessage.resended = true;
+      newMessage.resendedDialogName = chosenMessage.resendedDialogName;
+      newMessage.resendedMessage = resultResendedMessage;
+
+      if (chosenMessage.prevResendedDialogName) {
+        newMessage.prevResendedDialogName =
+            chosenMessage.prevResendedDialogName;
+      }
+    }
+    createNewMessage(newMessage);
+  }
+
+  const sendMessage = () => {
+    if (inputValue) {
+      if (chosenMessage.inAStateOfEdit) {
+        editingMessage();
+      }  else  {
+        sendSimpleMessage();
+      }
+    } else if (chosenMessage.sentToAnotherDialog) {
+      sentChosenMesToAnotherDialog();
     }
     setChosenMessage({});
     setInputValue('');
@@ -159,12 +191,14 @@ export const ChatScreen = () => {
   };
 
   const replyToMessage = () => {
-    const resultChosenMessage = chosenMessage.message
-      ? chosenMessage
-      : chosenMessageForHeader;
+    const resultChosenMessage =
+      chosenMessage !== undefined ? chosenMessage : chosenMessageForHeader;
     const newItem = {...resultChosenMessage};
     newItem.isResend = true;
-    newItem.dialogName = route.params.dialogName;
+    if (newItem.resendedDialogName) {
+      newItem.prevResendedDialogName = newItem.resendedDialogName;
+    }
+    newItem.resendedDialogName = route.params.dialogName;
     setChosenMessage(newItem);
     closeBottomSheet();
   };
@@ -176,9 +210,8 @@ export const ChatScreen = () => {
   };
 
   const editMessage = () => {
-    const resultChosenMessage = chosenMessage.message
-      ? chosenMessage
-      : chosenMessageForHeader;
+    const resultChosenMessage =
+      chosenMessage !== undefined ? chosenMessage : chosenMessageForHeader;
     const newItem = {...resultChosenMessage};
     newItem.inAStateOfEdit = true;
     setChosenMessage(newItem);
@@ -187,12 +220,13 @@ export const ChatScreen = () => {
   };
 
   const forwardMessage = () => {
-    const resultChosenMessage = chosenMessage.message
-      ? chosenMessage
-      : chosenMessageForHeader;
+    const resultChosenMessage =
+      chosenMessage !== undefined ? chosenMessage : chosenMessageForHeader;
     const newItem = {...resultChosenMessage};
+    if (!newItem.resended) {
+      newItem.resendedDialogName = route.params.dialogName;
+    }
     newItem.sentToAnotherDialog = true;
-    newItem.dialogName = route.params.dialogName;
     dispatch(forwardingMessages(newItem));
     closeBottomSheet();
     navigation.navigate(navigationPages.HOME);
@@ -350,7 +384,7 @@ export const ChatScreen = () => {
           </View>
         )}
       </View>
-      <ActionOnMessageView
+      <ClipboardMessageContainer
         chosenMessage={chosenMessage}
         setChosenMessage={setChosenMessage}
         setInputValue={setInputValue}

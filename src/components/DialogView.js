@@ -17,10 +17,16 @@ export const DialogView = props => {
           {props.currentMessagesList.messagesList.length ? (
             <View>
               <Text style={styles.lastMessageText} numberOfLines={1}>
-                {
-                  props.currentMessagesList.messagesList[props.lastIndex]
-                    .message
-                }
+                {props.currentMessagesList.messagesList[props.lastIndex].message
+                  ? props.currentMessagesList.messagesList[props.lastIndex]
+                      .message
+                  : `${
+                      props.currentMessagesList.messagesList[props.lastIndex]
+                        .resendedDialogName
+                    }: ${
+                      props.currentMessagesList.messagesList[props.lastIndex]
+                        .resendedMessage
+                    }`}
               </Text>
               <Text style={styles.dialogDate}>
                 {props.currentMessagesList.messagesList[props.lastIndex].date}

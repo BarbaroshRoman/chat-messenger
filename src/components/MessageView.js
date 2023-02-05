@@ -14,20 +14,19 @@ export const MessageView = props => {
           {props.item.resended ? (
             <View style={styles.messageResendLabel}>
               <Text style={styles.tableOfContents} numberOfLines={1}>
-                {props.item.resendedDialogName}
+                {props.item.prevResendedDialogName
+                  ? props.item.prevResendedDialogName
+                  : props.item.resendedDialogName}
               </Text>
               <Text style={styles.messageResendText} numberOfLines={1}>
                 {props.item.resendedMessage}
               </Text>
             </View>
           ) : null}
-          <Text style={styles.messageText}>{props.item.message}</Text>
-          <View
-            style={
-              props.item.message.length < 5 && !props.item.resended
-                ? styles.notAbsoluteDate
-                : styles.messageDateContainer
-            }>
+          {props.item.message && (
+            <Text style={styles.messageText}>{props.item.message}</Text>
+          )}
+          <View style={styles.messageDateContainer}>
             {props.item.edited && (
               <Text style={styles.editedMessageLabel}>изменено</Text>
             )}
@@ -61,16 +60,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
   },
-  notAbsoluteDate: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
   messageDateContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    bottom: -2,
-    right: 2,
   },
   messageResendLabel: {
     borderLeftWidth: 4,

@@ -65,10 +65,9 @@ const messagesSlice = createSlice({
       );
     },
     deletingMessagesListForDialog(state, action) {
-      const result = [...state.messageLists].filter(
+      state.messageLists = [...state.messageLists].filter(
         el => el.dialogId !== action.payload,
       );
-      state.messageLists = result;
     },
     forwardingMessages(state, action) {
       state.chosenMessageForForwarding = action.payload;
