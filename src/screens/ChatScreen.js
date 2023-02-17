@@ -35,9 +35,9 @@ import {PinnedItemView} from "../components/PinnedItemView";
 export const ChatScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const flatRef = useRef(null);
     const dispatch = useDispatch();
 
+    const flatRef = useRef(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [headerMenu, setHeaderMenu] = useState(false);
     const [chosenMessage, setChosenMessage] = useState({});
@@ -70,7 +70,7 @@ export const ChatScreen = () => {
                 lastMessageId: lastMessageId,
             }),
         );
-    });
+    }, [currentMessagesList, dispatch]);
 
     LogBox.ignoreLogs([
         'Non-serializable values were found in the navigation state',

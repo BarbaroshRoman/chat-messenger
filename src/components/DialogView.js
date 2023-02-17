@@ -4,6 +4,12 @@ import {StyleSheet, Text, View, TouchableHighlight} from 'react-native';
 import {COLORS} from '../resources/colors';
 
 export const DialogView = props => {
+  const targetMessageList = props.currentMessagesList.messagesList;
+  const renderMessage = () => {
+    const lastIndexMessage = targetMessageList[props.lastIndex];
+    return lastIndexMessage.message ??
+        `${lastIndexMessage.resendedDialogName}: ${lastIndexMessage.resendedMessage}`
+  }
   return (
     <View>
       <TouchableHighlight
@@ -15,22 +21,13 @@ export const DialogView = props => {
           <Text style={styles.dialogNameText} numberOfLines={1}>
             {props.item.dialogName}
           </Text>
-          {props.currentMessagesList.messagesList.length ? (
+          {targetMessageList.length ? (
             <View>
               <Text style={styles.lastMessageText} numberOfLines={1}>
-                {props.currentMessagesList.messagesList[props.lastIndex].message
-                  ? props.currentMessagesList.messagesList[props.lastIndex]
-                      .message
-                  : `${
-                      props.currentMessagesList.messagesList[props.lastIndex]
-                        .resendedDialogName
-                    }: ${
-                      props.currentMessagesList.messagesList[props.lastIndex]
-                        .resendedMessage
-                    }`}
+                {renderMessage()}
               </Text>
               <Text style={styles.dialogDate}>
-                {props.currentMessagesList.messagesList[props.lastIndex].date}
+                {targetMessageList[props.lastIndex].date}
               </Text>
             </View>
           ) : (

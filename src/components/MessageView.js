@@ -5,7 +5,7 @@ import {COLORS} from '../resources/colors';
 
 export const MessageView = props => {
     return (
-        <View>
+        <>
             <TouchableHighlight
                 style={styles.messageContainer}
                 underlayColor={COLORS.lightSteelBlue}
@@ -18,9 +18,7 @@ export const MessageView = props => {
                     {props.item.resended ? (
                         <View style={styles.messageResendLabel}>
                             <Text style={styles.tableOfContents} numberOfLines={1}>
-                                {props.item.prevResendedDialogName
-                                    ? props.item.prevResendedDialogName
-                                    : props.item.resendedDialogName}
+                                {props.item.prevResendedDialogName || props.item.resendedDialogName}
                             </Text>
                             <Text style={styles.messageResendText} numberOfLines={1}>
                                 {props.item.resendedMessage}
@@ -38,7 +36,7 @@ export const MessageView = props => {
                     </View>
                 </>
             </TouchableHighlight>
-        </View>
+        </>
     );
 };
 

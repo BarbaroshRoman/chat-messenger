@@ -19,10 +19,9 @@ const dialogsSlice = createSlice({
                     el.lastMessageId = new Date(action.payload.lastMessageId);
                 }
             });
-            state.dialogsList = [...state.dialogsList].sort(
-                (a, b) => a.lastMessageId - b.lastMessageId,
-            );
-            state.dialogsList = [...state.dialogsList].reverse();
+            state.dialogsList = [...state.dialogsList]
+                .sort((a, b) => a.lastMessageId - b.lastMessageId)
+                .reverse();
         },
         pinningDialog(state, action) {
             if(state.pinnedDialog.isPinned) {

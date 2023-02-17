@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {StyleSheet, View} from "react-native";
 import {BottomSheet} from "react-native-btr";
 
@@ -6,6 +6,12 @@ import {COLORS} from "../../resources/colors";
 import {ButtonBottomSheet} from "./children/ButtonBottomSheet";
 
 export const ChatScreenBottomSheet = (props) => {
+
+    const messageHelper = useCallback((cb) => {
+        props.closeBottomSheet();
+        cb();
+    },[props]);
+
     return (
         <BottomSheet
             visible={props.modalVisible}
@@ -15,10 +21,7 @@ export const ChatScreenBottomSheet = (props) => {
                 {props.chosenMessage.isPinned ? (
                     <ButtonBottomSheet
                         isUnpin={true}
-                        onPress={() => {
-                            props.closeBottomSheet();
-                            props.unpinMessage();
-                        }}
+                        onPress={() => messageHelper(props.unpinMessage)}
                         name={"pin-off"}
                         color='white'
                         text={'Открепить'}
@@ -44,10 +47,7 @@ export const ChatScreenBottomSheet = (props) => {
                             text={'Переслать'}
                         />
                         <ButtonBottomSheet
-                            onPress={() => {
-                                props.closeBottomSheet();
-                                props.deleteMessage();
-                            }}
+                            onPress={() => messageHelper(props.deleteMessage)}
                             name={"trash-outline"}
                             color={'red'}
                             text={'Удалить'}
