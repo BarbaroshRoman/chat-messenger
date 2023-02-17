@@ -1,4 +1,5 @@
 export const navigationPages = {
-  HOME: 'HomeScreen',
-  CHAT: 'ChatScreen',
+  HOME: 'Сообщения',
+  CHAT: 'Чат',
+  PROFILE: 'Профиль',
 };

@@ -10,7 +10,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-          <StatusBar backgroundColor={"darkslategrey"} animated={true}/>
+          <StatusBar backgroundColor={"teal"} animated={true} barStyle={"light-content"}/>
         <RootStackContainer />
       </PersistGate>
     </Provider>

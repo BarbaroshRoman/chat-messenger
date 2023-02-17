@@ -5,7 +5,7 @@ export const replaceMessagesListForDialog = (
 ) => {
   state.forEach(el => {
     if (el.dialogId === currentDialogId) {
-      el.messagesList = currentMessagesList;
+      el = currentMessagesList;
     }
   });
 };

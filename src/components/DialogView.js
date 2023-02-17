@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, TouchableHighlight} from 'react-native';
+
 import {COLORS} from '../resources/colors';
 
 export const DialogView = props => {
@@ -51,23 +52,23 @@ const styles = StyleSheet.create({
   dialogNameText: {
     paddingLeft: 10,
     color: COLORS.lavender,
-    fontSize: 20,
+    fontSize: 18,
   },
   lastMessageText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 16,
     paddingRight: 50,
     paddingLeft: 10,
   },
   dialogDate: {
     alignSelf: 'flex-end',
     color: 'white',
-    fontSize: 14,
+    fontSize: 12,
     marginRight: 4,
   },
   emptyMessageText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 16,
     paddingRight: 50,
     paddingLeft: 10,
     paddingBottom: 24,

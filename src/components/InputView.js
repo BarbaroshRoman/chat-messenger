@@ -1,6 +1,7 @@
 import React from 'react';
 import {Icon} from '@rneui/themed';
 import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+
 import {COLORS} from '../resources/colors';
 
 export const InputView = props => {

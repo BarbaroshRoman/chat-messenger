@@ -20,7 +20,7 @@ const messagesSlice = createSlice({
       replaceMessagesListForDialog(
         state.messageLists,
         currentMessagesList.dialogId,
-        currentMessagesList.messagesList,
+        currentMessagesList,
       );
     },
     editingMessages(state, action) {
@@ -37,7 +37,7 @@ const messagesSlice = createSlice({
       replaceMessagesListForDialog(
         state.messageLists,
         currentMessagesList.dialogId,
-        currentMessagesList.messagesList,
+        currentMessagesList,
       );
     },
     cleaningMessages(state, action) {
@@ -49,7 +49,7 @@ const messagesSlice = createSlice({
       replaceMessagesListForDialog(
         state.messageLists,
         currentMessagesList.dialogId,
-        currentMessagesList.messagesList,
+        currentMessagesList,
       );
     },
     cleaningAllMessages(state, action) {
@@ -61,7 +61,7 @@ const messagesSlice = createSlice({
       replaceMessagesListForDialog(
         state.messageLists,
         currentMessagesList.dialogId,
-        currentMessagesList.messagesList,
+        currentMessagesList,
       );
     },
     deletingMessagesListForDialog(state, action) {
@@ -71,6 +71,30 @@ const messagesSlice = createSlice({
     },
     forwardingMessages(state, action) {
       state.chosenMessageForForwarding = action.payload;
+    },
+    pinningMessage(state, action) {
+      const currentMessagesList = findMessagesListForDialog(
+          state.messageLists,
+          action.payload.dialogId,
+      );
+      currentMessagesList.pinnedMessage = action.payload.newPinnedMessage;
+      replaceMessagesListForDialog(
+          state.messageLists,
+          currentMessagesList.dialogId,
+          currentMessagesList,
+      );
+    },
+    unpiningMessage(state, action) {
+      const currentMessagesList = findMessagesListForDialog(
+          state.messageLists,
+          action.payload.dialogId,
+      );
+      currentMessagesList.pinnedMessage = action.payload.clearPinnedMessage;
+      replaceMessagesListForDialog(
+          state.messageLists,
+          currentMessagesList.dialogId,
+          currentMessagesList,
+      );
     },
   },
 });
@@ -83,6 +107,8 @@ export const {
   cleaningAllMessages,
   deletingMessagesListForDialog,
   forwardingMessages,
+  pinningMessage,
+  unpiningMessage,
 } = messagesSlice.actions;
 
 export const {reducer: messagesReducer} = messagesSlice;
