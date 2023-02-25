@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: 'white',
-    height: 50,
     padding: 10,
     fontSize: 18,
   },

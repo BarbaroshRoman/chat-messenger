@@ -1,7 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 import {DialogsInitialState} from './dialogsState';
-import {unpiningMessage} from "../messages/messagesSlice";
 
 const dialogsSlice = createSlice({
     name: 'Dialogs',

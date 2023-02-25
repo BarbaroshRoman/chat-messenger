@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {Alert, Button, FlatList, StyleSheet, Text, View,} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -104,10 +104,13 @@ export const HomeScreen = () => {
             messageLists,
             pinnedDialog.dialogId,
         );
-        const lastIndex = currentMessagesList.messagesList.length - 1;
-        return currentMessagesList.messagesList[lastIndex] !== undefined ?
-            currentMessagesList.messagesList[lastIndex].message :
-            'История сообщений пуста';
+        const targetMessageList = currentMessagesList.messagesList;
+        const lastIndex = targetMessageList.length - 1;
+        const lastIndexMessage = targetMessageList[lastIndex];
+        if (targetMessageList.length) {
+            return lastIndexMessage.message ??
+                `${lastIndexMessage.resendedDialogName}: ${lastIndexMessage.resendedMessage}`
+        } else return 'История сообщений пуста';
     };
 
     const deleteDialog = dialogName =>

@@ -25,20 +25,20 @@ export const DrawerStackComponent = () => {
             drawerContent={props => <CustomDrawer {...props} />}
         >
             <Drawer.Screen
-                name={navigationPages.PROFILE}
-                component={ProfileScreen}
-                options={{
-                    drawerIcon: ({color}) => (
-                        <FontAwesome5 name={'user'} size={20} color={color} />
-                    )
-                }}
-            />
-            <Drawer.Screen
                 name={navigationPages.HOME}
                 component={HomeScreen}
                 options={{
                     drawerIcon: ({color}) => (
                         <AntDesign name={'message1'} size={20} color={color} />
+                    )
+                }}
+            />
+            <Drawer.Screen
+                name={navigationPages.PROFILE}
+                component={ProfileScreen}
+                options={{
+                    drawerIcon: ({color}) => (
+                        <FontAwesome5 name={'user'} size={20} color={color} />
                     )
                 }}
             />

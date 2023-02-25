@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     headerText: {
         flex: 1,
         alignSelf: 'center',
-        color: 'white',
+        color: COLORS.white,
         fontSize: 20,
         paddingLeft: 14,
     },

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react';
+import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react';
 import {
     Text,
     View,
@@ -107,9 +107,7 @@ export const ChatScreen = () => {
     }
 
     const sendChosenMessageToAnotherDialog = () => {
-        const resultResendedMessage = chosenMessage.message
-            ? chosenMessage.message
-            : chosenMessage.resendedMessage;
+        const resultResendedMessage = chosenMessage.message || chosenMessage.resendedMessage;
 
         const newMessage = {
             date: createDate(),
@@ -141,9 +139,7 @@ export const ChatScreen = () => {
         };
 
         if (chosenMessage.isResend || chosenMessage.sentToAnotherDialog) {
-            const resultResendedMessage = chosenMessage.message
-                ? chosenMessage.message
-                : chosenMessage.resendedMessage;
+            const resultResendedMessage = chosenMessage.message || chosenMessage.resendedMessage;
 
             newMessage.resended = true;
             newMessage.resendedDialogName = chosenMessage.resendedDialogName;
@@ -245,6 +241,11 @@ export const ChatScreen = () => {
         }))
     };
 
+    const pinnedMessageResult = () => {
+        return currentMessagesList.pinnedMessage.message ||
+            currentMessagesList.pinnedMessage.resendedMessage
+    };
+
     const clearMessages = useCallback(() =>
         Alert.alert(
             'Очистить историю',
@@ -338,9 +339,7 @@ export const ChatScreen = () => {
                 <PinnedItemView
                     onPress={() => onTouchMessage(currentMessagesList.pinnedMessage)}
                     title={'Закреплённое сообщение'}
-                    message={currentMessagesList.pinnedMessage.message ?
-                        currentMessagesList.pinnedMessage.message :
-                        currentMessagesList.pinnedMessage.resendedMessage}
+                    message={pinnedMessageResult()}
                 />
             )}
             <ChatScreenBottomSheet

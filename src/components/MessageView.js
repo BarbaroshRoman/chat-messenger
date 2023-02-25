@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     messageContainer: {
         backgroundColor: COLORS.steelBlue,
         paddingVertical: 4,
-        minWidth: '36%',
+        minWidth: '20%',
         paddingHorizontal: 4,
         borderBottomLeftRadius: 8,
         borderTopLeftRadius: 8,
