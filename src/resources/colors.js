@@ -14,5 +14,6 @@ export const COLORS = {
   steelBlue: '#4682B4',
   black: "#000",
   white: "#fff",
+  grey: 'grey',
   darkslategrey: "darkslategrey"
 };

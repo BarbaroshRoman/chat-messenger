@@ -11,13 +11,14 @@ export const DialogView = props => {
         `${lastIndexMessage.resendedDialogName}: ${lastIndexMessage.resendedMessage}`
   }
   return (
-    <View>
       <TouchableHighlight
         style={styles.dialogButton}
         underlayColor={COLORS.lightSteelBlue}
         onPress={() => props.goToPage(props.item)}
         onLongPress={() => props.setChosenDialog(props.item)}>
-        <View>
+        <View style={styles.dialogContainer}>
+          <Text style={styles.dialogImage}>{props.item.dialogName[0]}</Text>
+        <View style={styles.dialogContent}>
           <Text style={styles.dialogNameText} numberOfLines={1}>
             {props.item.dialogName}
           </Text>
@@ -34,8 +35,8 @@ export const DialogView = props => {
             <Text style={styles.emptyMessageText}>История сообщений пуста</Text>
           )}
         </View>
+        </View>
       </TouchableHighlight>
-    </View>
   );
 };
 
@@ -44,7 +45,25 @@ const styles = StyleSheet.create({
     minWidth: '100%',
     paddingHorizontal: 4,
     borderBottomWidth: 1,
-    borderColor: 'gray',
+    borderColor: COLORS.grey,
+  },
+  dialogContainer: {
+    flexDirection: "row",
+  },
+  dialogContent: {
+    flex: 1,
+  },
+  dialogImage: {
+    backgroundColor: COLORS.grey,
+    height: 50,
+    width: 50,
+    borderRadius: 40,
+    marginTop: 2,
+    marginLeft: 6,
+    textAlignVertical: "center",
+    textAlign: "center",
+    color: COLORS.white,
+    fontSize: 16,
   },
   dialogNameText: {
     paddingLeft: 10,
@@ -52,19 +71,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   lastMessageText: {
-    color: 'white',
+    color: COLORS.white,
     fontSize: 16,
     paddingRight: 50,
     paddingLeft: 10,
   },
   dialogDate: {
     alignSelf: 'flex-end',
-    color: 'white',
+    color: COLORS.white,
     fontSize: 12,
     marginRight: 4,
   },
   emptyMessageText: {
-    color: 'white',
+    color: COLORS.white,
     fontSize: 16,
     paddingRight: 50,
     paddingLeft: 10,
