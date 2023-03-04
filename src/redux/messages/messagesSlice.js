@@ -74,26 +74,26 @@ const messagesSlice = createSlice({
     },
     pinningMessage(state, action) {
       const currentMessagesList = findMessagesListForDialog(
-          state.messageLists,
-          action.payload.dialogId,
+        state.messageLists,
+        action.payload.dialogId,
       );
       currentMessagesList.pinnedMessage = action.payload.newPinnedMessage;
       replaceMessagesListForDialog(
-          state.messageLists,
-          currentMessagesList.dialogId,
-          currentMessagesList,
+        state.messageLists,
+        currentMessagesList.dialogId,
+        currentMessagesList,
       );
     },
     unpiningMessage(state, action) {
       const currentMessagesList = findMessagesListForDialog(
-          state.messageLists,
-          action.payload.dialogId,
+        state.messageLists,
+        action.payload.dialogId,
       );
       currentMessagesList.pinnedMessage = action.payload.clearPinnedMessage;
       replaceMessagesListForDialog(
-          state.messageLists,
-          currentMessagesList.dialogId,
-          currentMessagesList,
+        state.messageLists,
+        currentMessagesList.dialogId,
+        currentMessagesList,
       );
     },
   },

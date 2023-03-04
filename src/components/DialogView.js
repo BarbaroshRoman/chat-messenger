@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableHighlight} from 'react-native';
+import {StyleSheet, Text, View, TouchableHighlight, Image} from 'react-native';
 
 import {COLORS} from '../resources/colors';
 
@@ -7,17 +7,23 @@ export const DialogView = props => {
   const targetMessageList = props.currentMessagesList.messagesList;
   const renderMessage = () => {
     const lastIndexMessage = targetMessageList[props.lastIndex];
-    return lastIndexMessage.message ??
-        `${lastIndexMessage.resendedDialogName}: ${lastIndexMessage.resendedMessage}`
-  }
+    return (
+      lastIndexMessage.message ??
+      `${lastIndexMessage.resendedDialogName}: ${lastIndexMessage.resendedMessage}`
+    );
+  };
   return (
-      <TouchableHighlight
-        style={styles.dialogButton}
-        underlayColor={COLORS.lightSteelBlue}
-        onPress={() => props.goToPage(props.item)}
-        onLongPress={() => props.setChosenDialog(props.item)}>
-        <View style={styles.dialogContainer}>
+    <TouchableHighlight
+      style={styles.dialogButton}
+      underlayColor={COLORS.lightSteelBlue}
+      onPress={() => props.goToPage(props.item)}
+      onLongPress={() => props.setChosenDialog(props.item)}>
+      <View style={styles.dialogContainer}>
+        {props.userAvatar ? (
+          <Image source={{uri: props.userAvatar}} style={styles.avatar} />
+        ) : (
           <Text style={styles.dialogImage}>{props.item.dialogName[0]}</Text>
+        )}
         <View style={styles.dialogContent}>
           <Text style={styles.dialogNameText} numberOfLines={1}>
             {props.item.dialogName}
@@ -35,8 +41,8 @@ export const DialogView = props => {
             <Text style={styles.emptyMessageText}>История сообщений пуста</Text>
           )}
         </View>
-        </View>
-      </TouchableHighlight>
+      </View>
+    </TouchableHighlight>
   );
 };
 
@@ -45,13 +51,14 @@ const styles = StyleSheet.create({
     minWidth: '100%',
     paddingHorizontal: 4,
     borderBottomWidth: 1,
-    borderColor: COLORS.grey,
+    borderColor: COLORS.arsenic,
   },
   dialogContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   dialogContent: {
     flex: 1,
+    justifyContent: 'center',
   },
   dialogImage: {
     backgroundColor: COLORS.grey,
@@ -60,8 +67,8 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     marginTop: 2,
     marginLeft: 6,
-    textAlignVertical: "center",
-    textAlign: "center",
+    textAlignVertical: 'center',
+    textAlign: 'center',
     color: COLORS.white,
     fontSize: 16,
   },
@@ -71,9 +78,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   lastMessageText: {
+    flex: 1,
     color: COLORS.white,
     fontSize: 16,
-    paddingRight: 50,
     paddingLeft: 10,
   },
   dialogDate: {
@@ -87,6 +94,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingRight: 50,
     paddingLeft: 10,
-    paddingBottom: 24,
+    paddingBottom: 16,
+  },
+  avatar: {
+    height: 60,
+    width: 60,
+    borderRadius: 40,
+    marginVertical: 4,
   },
 });

@@ -1,6 +1,6 @@
 export const PersonalDataInitialState = {
-    username: '',
-    aboutMe: '',
-    myPhoto: '',
-    myImageBackground: '',
+  username: 'Без имени',
+  about: '',
+  photo: '',
+  imageBackground: '',
 };
