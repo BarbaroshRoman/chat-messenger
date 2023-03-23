@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {Alert, Button, FlatList, StyleSheet, Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -10,6 +10,7 @@ import {
   creatingDialog,
   deletingDialog,
   pinningDialog,
+  sortingDialogsWhenDeletingAMessage,
   unpiningDialog,
 } from '../redux/dialogs/dialogsSlice';
 import {DialogView} from '../components/DialogView';
@@ -56,6 +57,8 @@ export const HomeScreen = () => {
     isFocused && init();
   }, [isFocused]);
 
+  const data = useMemo(() => [...dialogsList].reverse(), [dialogsList]);
+
   const closeModalCreatingDialog = () => {
     setCreationDialog(false);
     setDialogNameValue('');
@@ -79,6 +82,7 @@ export const HomeScreen = () => {
       const newDialog = {
         dialogName: dialogNameValue.trim(),
         dialogId: new Date(),
+        lastMessageForDialog: {},
       };
       dispatch(creatingDialog(newDialog));
       dispatch(
@@ -87,6 +91,7 @@ export const HomeScreen = () => {
           pinnedMessage: {},
           userAvatar: userAvatarValue,
           messagesList: [],
+          loadingStatus: null,
         }),
       );
       closeModalCreatingDialog();
@@ -135,7 +140,7 @@ export const HomeScreen = () => {
     }
   }, [messageLists, pinnedDialog.dialogId]);
 
-  const avatarForPinnedDialog = useCallback( () => {
+  const avatarForPinnedDialog = useCallback(() => {
     const currentMessagesList = findMessagesListForDialog(
       messageLists,
       pinnedDialog.dialogId,
@@ -166,19 +171,27 @@ export const HomeScreen = () => {
       },
     ]);
 
-  const unpinDialog = useCallback(
-    () =>
-      Alert.alert('Открепить диалог', 'Вы хотите открепить диалог?', [
-        {
-          text: 'Отмена',
-        },
-        {
-          text: 'Открепить',
-          onPress: () => dispatch(unpiningDialog({})),
-        },
-      ]),
-    [dispatch],
-  );
+  const unpinDialogHelper = useCallback(() => {
+    const dialog = {...pinnedDialog};
+    dispatch(unpiningDialog({}));
+    dispatch(
+      sortingDialogsWhenDeletingAMessage({
+        dialogId: dialog.dialogId,
+        lastMessageId: dialog.lastMessageForDialog.messageId,
+      }),
+    );
+  }, [dispatch, pinnedDialog]);
+
+  const unpinDialog = () =>
+    Alert.alert('Открепить диалог', 'Вы хотите открепить диалог?', [
+      {
+        text: 'Отмена',
+      },
+      {
+        text: 'Открепить',
+        onPress: unpinDialogHelper,
+      },
+    ]);
 
   const renderDialogsList = ({item}) => {
     const currentMessagesList = findMessagesListForDialog(
@@ -252,7 +265,7 @@ export const HomeScreen = () => {
           {dialogsList.length || pinnedDialog.isPinned ? (
             <FlatList
               ref={flatRef}
-              data={dialogsList}
+              data={data}
               renderItem={renderDialogsList}
               keyExtractor={item => item.dialogName + Math.random()}
             />

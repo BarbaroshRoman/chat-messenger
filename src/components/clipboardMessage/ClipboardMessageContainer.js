@@ -2,6 +2,7 @@ import React from 'react';
 
 import {COLORS} from '../../resources/colors';
 import {ClipboardMessageView} from './children/MessageContainer';
+import {ClipboardCitySelectionView} from './children/CitySelectionContainer';
 
 export const ClipboardMessageContainer = props => {
   if (props.chosenMessage.isResend) {
@@ -32,6 +33,14 @@ export const ClipboardMessageContainer = props => {
         dialogName={props.chosenMessage.resendedDialogName}
         chosenMessage={props.chosenMessage}
         clearClipboard={props.clearClipboard}
+      />
+    );
+  } else if (props.isWeather) {
+    return (
+      <ClipboardCitySelectionView
+        selectCity={props.selectCity}
+        clearClipboard={props.clearClipboard}
+        loadingStatus={props.loadingStatus}
       />
     );
   }

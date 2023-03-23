@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderStyle: 'dotted',
     borderColor: COLORS.lightBlue,
+    paddingLeft: 8,
   },
   selectImage: {
     alignSelf: 'center',

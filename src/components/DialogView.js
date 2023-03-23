@@ -49,9 +49,7 @@ export const DialogView = props => {
 const styles = StyleSheet.create({
   dialogButton: {
     minWidth: '100%',
-    paddingHorizontal: 4,
-    borderBottomWidth: 1,
-    borderColor: COLORS.arsenic,
+    paddingHorizontal: 6,
   },
   dialogContainer: {
     flexDirection: 'row',
@@ -59,14 +57,15 @@ const styles = StyleSheet.create({
   dialogContent: {
     flex: 1,
     justifyContent: 'center',
+    borderBottomWidth: 0.5,
+    borderColor: COLORS.arsenic,
   },
   dialogImage: {
     backgroundColor: COLORS.grey,
-    height: 50,
-    width: 50,
+    height: 60,
+    width: 60,
     borderRadius: 40,
-    marginTop: 2,
-    marginLeft: 6,
+    marginVertical: 4,
     textAlignVertical: 'center',
     textAlign: 'center',
     color: COLORS.white,

@@ -1,8 +1,10 @@
 import {createSlice} from '@reduxjs/toolkit';
+import {REHYDRATE} from 'redux-persist/es/constants';
 
 import {findMessagesListForDialog} from '../../helpers/findMessagesListForDialog';
 import {replaceMessagesListForDialog} from '../../helpers/replaceMessagesListForDialog';
 import {MessagesInitialState} from './messagesState';
+import {getWeather} from './messageThunk';
 
 const messagesSlice = createSlice({
   name: 'Messages',
@@ -97,7 +99,59 @@ const messagesSlice = createSlice({
       );
     },
   },
+  extraReducers: builder => {
+    builder
+      .addCase(REHYDRATE, rehydrate)
+      .addCase(getWeather.pending, getWeatherPending)
+      .addCase(getWeather.fulfilled, getWeatherFulfilled)
+      .addCase(getWeather.rejected, getWeatherRejected);
+  },
 });
+
+const rehydrate = state => {
+  return state;
+};
+
+const getWeatherPending = (state, action) => {
+  const currentMessagesList = findMessagesListForDialog(
+    state.messageLists,
+    action.meta.arg.id,
+  );
+  currentMessagesList.loadingStatus = 'Загрузка...';
+  replaceMessagesListForDialog(
+    state.messageLists,
+    currentMessagesList.dialogId,
+    currentMessagesList,
+  );
+};
+
+const getWeatherFulfilled = (state, action) => {
+  const currentMessagesList = findMessagesListForDialog(
+    state.messageLists,
+    action.payload.id,
+  );
+  currentMessagesList.messagesList.push(action.payload.newMessage);
+  currentMessagesList.loadingStatus = null;
+  replaceMessagesListForDialog(
+    state.messageLists,
+    currentMessagesList.dialogId,
+    currentMessagesList,
+  );
+};
+
+const getWeatherRejected = (state, action) => {
+  const currentMessagesList = findMessagesListForDialog(
+    state.messageLists,
+    action.payload.id,
+  );
+  currentMessagesList.messagesList.push(action.payload.newMessage);
+  currentMessagesList.loadingStatus = null;
+  replaceMessagesListForDialog(
+    state.messageLists,
+    currentMessagesList.dialogId,
+    currentMessagesList,
+  );
+};
 
 export const {
   creatingMessageListForDialog,

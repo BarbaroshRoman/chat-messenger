@@ -4,7 +4,6 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {useSelector} from 'react-redux';
 
 import {COLORS} from '../resources/colors';
@@ -27,10 +26,7 @@ export const CustomDrawer = props => {
         ) : (
           <Text style={styles.imageText}>БИ</Text>
         )}
-        <View style={styles.username}>
-          <Entypo name="user" size={18} color={COLORS.lightBlue} />
-          <Text style={styles.usernameText}>{username}</Text>
-        </View>
+        <Text style={styles.usernameText}>{username}</Text>
         <Text style={styles.aboutMeText}>{about}</Text>
       </ImageBackground>
       <DrawerContentScrollView {...props}>
@@ -65,13 +61,9 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 18,
   },
-  username: {
-    flexDirection: 'row',
-  },
   usernameText: {
     color: COLORS.white,
     fontSize: 16,
-    marginLeft: 8,
   },
   aboutMeText: {
     color: COLORS.lightSteelBlue,

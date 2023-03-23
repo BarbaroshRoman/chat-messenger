@@ -19,11 +19,17 @@ import {creatingMessages} from '../redux/messages/messagesSlice';
 import {findMessagesListForDialog} from '../helpers/findMessagesListForDialog';
 import {navigationPages} from '../navigation/components/navigationPages';
 import {ClipboardMessageContainer} from '../components/clipboardMessage/ClipboardMessageContainer';
-import {dialogsSorting} from '../redux/dialogs/dialogsSlice';
+import {
+  creatingLastMessageForDialog,
+  dialogsSorting,
+  sortingDialogsWhenDeletingAMessage,
+} from '../redux/dialogs/dialogsSlice';
 import {COLORS} from '../resources/colors';
 import {createDate} from '../helpers/createDate';
 import {ChatScreenBottomSheet} from '../components/сhatScreenBottomSheet/ChatScreenBottomSheet';
 import {PinnedItemView} from '../components/PinnedItemView';
+import {getWeather} from '../redux/messages/messageThunk';
+import {CITY} from '../resources/city';
 
 export const ChatScreen = () => {
   const navigation = useNavigation();
@@ -36,7 +42,10 @@ export const ChatScreen = () => {
   const [chosenMessage, setChosenMessage] = useState({});
   const [chosenMessageForHeader, setChosenMessageForHeader] = useState({});
   const [inputValue, setInputValue] = useState('');
+  const [isLastDeletedMessage, setIsLastDeletedMessage] = useState(false);
+  const [isWeather, setIsWeather] = useState(false);
 
+  const pinnedDialog = useSelector(state => state.dialogs.pinnedDialog);
   const messageLists = useSelector(state => state.messages.messageLists);
   const chosenMessageForForwarding = useSelector(
     state => state.messages.chosenMessageForForwarding,
@@ -55,21 +64,34 @@ export const ChatScreen = () => {
     const list = currentMessagesList.messagesList;
     const messagesListLength = list.length;
     const lastIndex = messagesListLength - 1;
-    const lastMessageId = list[lastIndex].messageId;
+    const lastMessageId = list[lastIndex]?.messageId;
 
-    const isNewMessage =
-      messagesListLength && Date.now() - lastMessageId < 1000;
-    if (isNewMessage) {
-      const resultLastMessageId = messagesListLength ? lastMessageId : null;
-
-      dispatch(
-        dialogsSorting({
-          dialogId: route.params.dialogId,
-          lastMessageId: resultLastMessageId,
-        }),
+    if (messagesListLength) {
+      addNewMessage(messagesListLength, lastMessageId, list, lastIndex);
+    }
+    if (isLastDeletedMessage) {
+      deleteMessageForDialogsSort(
+        messagesListLength,
+        lastMessageId,
+        list,
+        lastIndex,
       );
     }
-  }, [currentMessagesList.messagesList, dispatch, route.params.dialogId]);
+  }, [
+    currentMessagesList.messagesList,
+    dispatch,
+    isLastDeletedMessage,
+    route.params.dialogId,
+  ]);
+
+  useEffect(() => {
+    const lowerMessage = inputValue.trim().toLowerCase();
+    if (lowerMessage === 'погода') {
+      setIsWeather(true);
+    } else {
+      setIsWeather(false);
+    }
+  }, [inputValue]);
 
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -95,6 +117,75 @@ export const ChatScreen = () => {
   const openModalHeaderMenu = () => {
     setHeaderMenu(true);
   };
+
+  const selectCity = useCallback(
+    city => {
+      if (city === CITY.tiraspol) {
+        dispatch(
+          getWeather({
+            city: CITY.tiraspol,
+            id: route.params.dialogId,
+            latitude: '46.84',
+            longitude: '29.63',
+            clearClipboard: () => clearClipboard(),
+          }),
+        );
+      } else if (city === CITY.kishinev) {
+        dispatch(
+          getWeather({
+            city: CITY.kishinev,
+            id: route.params.dialogId,
+            latitude: '47.00',
+            longitude: '28.86',
+            clearClipboard: () => clearClipboard(),
+          }),
+        );
+      }
+    },
+    [dispatch, route.params.dialogId],
+  );
+
+  const addNewMessage = useCallback(
+    (messagesListLength, lastMessageId, list, lastIndex) => {
+      const isNewMessage =
+        messagesListLength && Date.now() - lastMessageId < 1000;
+      if (isNewMessage) {
+        if (pinnedDialog.dialogId !== route.params.dialogId) {
+          dispatch(dialogsSorting(route.params.dialogId));
+        }
+        dispatch(
+          creatingLastMessageForDialog({
+            dialogId: route.params.dialogId,
+            lastMessage: list[lastIndex],
+          }),
+        );
+      }
+    },
+    [dispatch, pinnedDialog.dialogId, route.params.dialogId],
+  );
+
+  const deleteMessageForDialogsSort = useCallback(
+    (messagesListLength, lastMessageId, list, lastIndex) => {
+      if (messagesListLength) {
+        if (pinnedDialog.dialogId !== route.params.dialogId) {
+          dispatch(
+            sortingDialogsWhenDeletingAMessage({
+              dialogId: route.params.dialogId,
+              lastMessageId: lastMessageId,
+            }),
+          );
+        }
+      }
+      dispatch(
+        creatingLastMessageForDialog({
+          dialogId: route.params.dialogId,
+          lastMessage: messagesListLength ? list[lastIndex] : {},
+        }),
+      );
+      setIsLastDeletedMessage(false);
+    },
+    [dispatch, pinnedDialog.dialogId, route.params.dialogId],
+  );
 
   const createNewMessage = newMessage => {
     dispatch(
@@ -157,7 +248,10 @@ export const ChatScreen = () => {
   const clearClipboard = () => {
     setChosenMessage({});
     setInputValue('');
-    chosenMessageForForwarding.message && dispatch(forwardingMessages({}));
+    setIsWeather(false);
+    (chosenMessageForForwarding.message ||
+      chosenMessageForForwarding.resendedMessage) &&
+      dispatch(forwardingMessages({}));
   };
 
   const sendMessage = useCallback(() => {
@@ -175,11 +269,13 @@ export const ChatScreen = () => {
     inputValue,
     chosenMessage.sentToAnotherDialog,
     chosenMessage.inAStateOfEdit,
-    clearClipboard,
     editingMessage,
   ]);
 
   const deleteMessageHelper = useCallback(() => {
+    const list = currentMessagesList.messagesList;
+    const lastIndex = currentMessagesList.messagesList.length - 1;
+    const lastMessageId = list[lastIndex].messageId;
     const resultChosenMessage = chosenMessage.date
       ? chosenMessage
       : chosenMessageForHeader;
@@ -191,6 +287,9 @@ export const ChatScreen = () => {
         dialogId: route.params.dialogId,
       }),
     );
+    if (resultChosenMessage.messageId === lastMessageId) {
+      setIsLastDeletedMessage(true);
+    }
     if (chosenMessage) {
       setChosenMessage({});
     } else {
@@ -275,25 +374,30 @@ export const ChatScreen = () => {
     ],
   );
 
-  const clearMessages = useCallback(
-    () =>
-      Alert.alert(
-        'Очистить историю',
-        'Вы точно хотите очистить историю переписки?',
-        [
-          {
-            text: 'Отмена',
-          },
-          {
-            text: 'Удалить',
-            onPress: () => {
-              dispatch(cleaningAllMessages(route.params.dialogId));
-            },
-          },
-        ],
-      ),
-    [dispatch, route.params.dialogId],
-  );
+  const clearMessagesHelper = useCallback(() => {
+    dispatch(
+      creatingLastMessageForDialog({
+        dialogId: currentMessagesList.dialogId,
+        lastMessage: {},
+      }),
+    );
+    dispatch(cleaningAllMessages(route.params.dialogId));
+  }, [currentMessagesList.dialogId, dispatch, route.params.dialogId]);
+
+  const clearMessages = () =>
+    Alert.alert(
+      'Очистить историю',
+      'Вы точно хотите очистить историю переписки?',
+      [
+        {
+          text: 'Отмена',
+        },
+        {
+          text: 'Удалить',
+          onPress: clearMessagesHelper,
+        },
+      ],
+    );
 
   const deleteMessage = () =>
     Alert.alert('Удалить сообщение', 'Вы хотите удалить это сообщение?', [
@@ -393,7 +497,6 @@ export const ChatScreen = () => {
           <FlatList
             ref={flatRef}
             onContentSizeChange={() => flatRef.current.scrollToEnd()}
-            contentContainerStyle={styles.flatListContainer}
             data={currentMessagesList.messagesList}
             renderItem={renderMessagesList}
             keyExtractor={item => item.message + item.date + Math.random()}
@@ -410,6 +513,9 @@ export const ChatScreen = () => {
         chosenMessage={chosenMessage}
         dialogName={route.params.dialogName}
         clearClipboard={clearClipboard}
+        selectCity={selectCity}
+        isWeather={isWeather}
+        loadingStatus={currentMessagesList.loadingStatus}
       />
       <InputView
         sendMessage={sendMessage}
@@ -427,9 +533,6 @@ const styles = StyleSheet.create({
   chat: {
     flex: 1,
     backgroundColor: COLORS.arsenic,
-  },
-  flatListContainer: {
-    alignItems: 'flex-end',
   },
   checkmarkSharpIcon: {
     position: 'absolute',
