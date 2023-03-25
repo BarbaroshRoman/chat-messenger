@@ -9,10 +9,9 @@ export const getWeather = createAsyncThunk(
     try {
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${params.latitude}&longitude=${params.longitude}&current_weather=true`;
       const response = await fetch(url, {method: 'get'});
-      const weather = await response.json();
-      const currentWeather = weather.current_weather;
-      const temperature = currentWeather.temperature;
-      const windspeed = currentWeather.windspeed;
+      const jsonResponse = await response.json();
+      const temperature = jsonResponse.current_weather.temperature;
+      const windspeed = jsonResponse.current_weather.windspeed;
       const city = params.city;
 
       return {

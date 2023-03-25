@@ -11,37 +11,44 @@ import {Icon} from '@rneui/base';
 import {COLORS} from '../../../resources/colors';
 import {CITY} from '../../../resources/city';
 
-export const ClipboardCitySelectionView = props => {
-  const {selectCity, clearClipboard, loadingStatus} = props;
-  return (
-    <View style={styles.container}>
-      {loadingStatus ? (
-        <>
-          <ActivityIndicator size="large"/>
-          <Text style={styles.loadingStatusText}>{loadingStatus}</Text>
-        </>
-      ) : (
-        <>
-          <TouchableOpacity
-            style={styles.city}
-            onPress={() => selectCity(CITY.tiraspol)}>
-            <Text style={styles.cityText}>Тирасполь</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.city}
-            onPress={() => selectCity(CITY.kishinev)}>
-            <Text style={styles.cityText}>Кишинёв</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.closeViewButton}
-            activeOpacity={0.6}
-            onPress={clearClipboard}>
-            <Icon name="close-outline" type="ionicon" color="white" size={26} />
-          </TouchableOpacity>
-        </>
-      )}
-    </View>
-  );
+export const SitySelectionContainer = props => {
+  const {showCityContainer, selectCity, clearClipboard, loadingStatus} = props;
+  if (showCityContainer) {
+    return (
+      <View style={styles.container}>
+        {loadingStatus ? (
+          <>
+            <ActivityIndicator size="large" />
+            <Text style={styles.loadingStatusText}>{loadingStatus}</Text>
+          </>
+        ) : (
+          <>
+            <TouchableOpacity
+              style={styles.city}
+              onPress={() => selectCity(CITY.tiraspol)}>
+              <Text style={styles.cityText}>Тирасполь</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.city}
+              onPress={() => selectCity(CITY.kishinev)}>
+              <Text style={styles.cityText}>Кишинёв</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeViewButton}
+              activeOpacity={0.6}
+              onPress={clearClipboard}>
+              <Icon
+                name="close-outline"
+                type="ionicon"
+                color="white"
+                size={26}
+              />
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

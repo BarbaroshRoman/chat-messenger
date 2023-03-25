@@ -20,6 +20,7 @@ export const DrawerStackComponent = () => {
         swipeEdgeWidth: 250,
         swipeMinDistance: 20,
         drawerInactiveTintColor: COLORS.lightBlue,
+        drawerActiveTintColor: COLORS.azure,
         drawerLabelStyle: {marginLeft: -20},
       }}
       drawerContent={props => <CustomDrawer {...props} />}>

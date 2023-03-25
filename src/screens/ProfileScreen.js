@@ -62,7 +62,6 @@ export const ProfileScreen = () => {
       height: 400,
       cropping: true,
     }).then(image => {
-      console.log(image);
       setImage(image.path);
     });
   };
@@ -73,7 +72,6 @@ export const ProfileScreen = () => {
       height: 400,
       cropping: true,
     }).then(image => {
-      console.log(image);
       setPhoto(image.path);
     });
   };

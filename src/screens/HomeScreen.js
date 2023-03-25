@@ -154,7 +154,6 @@ export const HomeScreen = () => {
       height: 400,
       cropping: true,
     }).then(image => {
-      console.log(image);
       setUserAvatarValue(image.path);
     });
   };

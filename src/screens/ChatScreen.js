@@ -30,6 +30,7 @@ import {ChatScreenBottomSheet} from '../components/сhatScreenBottomSheet/ChatSc
 import {PinnedItemView} from '../components/PinnedItemView';
 import {getWeather} from '../redux/messages/messageThunk';
 import {CITY} from '../resources/city';
+import { SitySelectionContainer } from "../components/clipboardMessage/children/CitySelectionContainer";
 
 export const ChatScreen = () => {
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ export const ChatScreen = () => {
   const [chosenMessageForHeader, setChosenMessageForHeader] = useState({});
   const [inputValue, setInputValue] = useState('');
   const [isLastDeletedMessage, setIsLastDeletedMessage] = useState(false);
-  const [isWeather, setIsWeather] = useState(false);
+  const [showCityContainer, setShowCityContainer] = useState(false);
 
   const pinnedDialog = useSelector(state => state.dialogs.pinnedDialog);
   const messageLists = useSelector(state => state.messages.messageLists);
@@ -85,12 +86,8 @@ export const ChatScreen = () => {
   ]);
 
   useEffect(() => {
-    const lowerMessage = inputValue.trim().toLowerCase();
-    if (lowerMessage === 'погода') {
-      setIsWeather(true);
-    } else {
-      setIsWeather(false);
-    }
+    const prepareInputValue = inputValue.trim().toLowerCase();
+    setShowCityContainer(prepareInputValue === 'погода');
   }, [inputValue]);
 
   LogBox.ignoreLogs([
@@ -120,27 +117,15 @@ export const ChatScreen = () => {
 
   const selectCity = useCallback(
     city => {
-      if (city === CITY.tiraspol) {
-        dispatch(
-          getWeather({
-            city: CITY.tiraspol,
-            id: route.params.dialogId,
-            latitude: '46.84',
-            longitude: '29.63',
-            clearClipboard: () => clearClipboard(),
-          }),
-        );
-      } else if (city === CITY.kishinev) {
-        dispatch(
-          getWeather({
-            city: CITY.kishinev,
-            id: route.params.dialogId,
-            latitude: '47.00',
-            longitude: '28.86',
-            clearClipboard: () => clearClipboard(),
-          }),
-        );
-      }
+      dispatch(
+        getWeather({
+          city: city === CITY.tiraspol ? CITY.tiraspol : CITY.kishinev,
+          id: route.params.dialogId,
+          latitude: city === CITY.tiraspol ? '46.84' : '47.00',
+          longitude: city === CITY.tiraspol ? '29.63' : '28.86',
+          clearClipboard: () => clearClipboard(),
+        }),
+      );
     },
     [dispatch, route.params.dialogId],
   );
@@ -248,7 +233,7 @@ export const ChatScreen = () => {
   const clearClipboard = () => {
     setChosenMessage({});
     setInputValue('');
-    setIsWeather(false);
+    setShowCityContainer(false);
     (chosenMessageForForwarding.message ||
       chosenMessageForForwarding.resendedMessage) &&
       dispatch(forwardingMessages({}));
@@ -511,10 +496,13 @@ export const ChatScreen = () => {
       </View>
       <ClipboardMessageContainer
         chosenMessage={chosenMessage}
-        dialogName={route.params.dialogName}
         clearClipboard={clearClipboard}
+        dialogName={route.params.dialogName}
+      />
+      <SitySelectionContainer
         selectCity={selectCity}
-        isWeather={isWeather}
+        clearClipboard={clearClipboard}
+        showCityContainer={showCityContainer}
         loadingStatus={currentMessagesList.loadingStatus}
       />
       <InputView

@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Modal, StyleSheet, Text, TextInput, View} from 'react-native';
 
 import {COLORS} from '../../resources/colors';
 import {ModalCreatingDialogButtons} from './children/ModalCreatingDialogButtons';
@@ -67,13 +59,13 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 20,
     marginBottom: 10,
-    marginLeft: 12,
+    marginLeft: 4,
+    fontWeight: 'bold',
   },
   inputModal: {
     fontSize: 16,
     paddingLeft: 6,
     marginVertical: 2,
-    borderTopWidth: 1,
     borderBottomWidth: 1,
     color: COLORS.white,
     borderColor: COLORS.white,

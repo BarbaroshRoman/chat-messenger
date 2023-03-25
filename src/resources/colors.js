@@ -16,4 +16,5 @@ export const COLORS = {
   white: '#fff',
   grey: 'grey',
   darkslategrey: 'darkslategrey',
+  azure: '#007FFF',
 };
