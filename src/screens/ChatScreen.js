@@ -86,7 +86,7 @@ export const ChatScreen = () => {
   ]);
 
   useEffect(() => {
-    const prepareInputValue = inputValue.trim().toLowerCase();
+    const prepareInputValue = inputValue?.trim().toLowerCase();
     setShowCityContainer(prepareInputValue === 'погода');
   }, [inputValue]);
 
