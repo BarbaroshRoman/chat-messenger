@@ -30,12 +30,14 @@ export const ChatScreenBottomSheet = props => {
           />
         ) : (
           <>
-            <ButtonBottomSheet
-              onPress={props.editMessage}
-              name={'pencil-outline'}
-              color={COLORS.limeGreen}
-              text={'Изменить'}
-            />
+            {!props.chosenMessage.feedback && (
+              <ButtonBottomSheet
+                onPress={props.editMessage}
+                name={'pencil-outline'}
+                color={COLORS.limeGreen}
+                text={'Изменить'}
+              />
+            )}
             <ButtonBottomSheet
               onPress={props.replyToMessage}
               name={'arrow-undo-outline'}

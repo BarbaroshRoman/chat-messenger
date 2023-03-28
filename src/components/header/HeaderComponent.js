@@ -35,11 +35,13 @@ export const HeaderComponent = props => {
                 name={'arrow-undo-outline'}
                 color={'white'}
               />
-              <CenterHeaderIcon
-                onPress={props.editMessage}
-                name={'pencil-outline'}
-                color={'white'}
-              />
+              {!props.chosenItem.feedback && (
+                <CenterHeaderIcon
+                  onPress={props.editMessage}
+                  name={'pencil-outline'}
+                  color={'white'}
+                />
+              )}
               <CenterHeaderIcon
                 onPress={props.forwardMessage}
                 name={'arrow-redo-outline'}

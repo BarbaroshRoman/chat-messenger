@@ -30,7 +30,7 @@ import {ChatScreenBottomSheet} from '../components/сhatScreenBottomSheet/ChatSc
 import {PinnedItemView} from '../components/PinnedItemView';
 import {getWeather} from '../redux/messages/messageThunk';
 import {CITY} from '../resources/city';
-import { SitySelectionContainer } from "../components/clipboardMessage/children/CitySelectionContainer";
+import {SitySelectionContainer} from '../components/clipboardMessage/children/CitySelectionContainer';
 
 export const ChatScreen = () => {
   const navigation = useNavigation();
@@ -419,7 +419,12 @@ export const ChatScreen = () => {
     return (
       <>
         {chosenMessageForHeader === item && (
-          <View style={styles.checkmarkSharpIcon}>
+          <View
+            style={
+              chosenMessageForHeader.feedback
+                ? styles.feedbackCheckmarkIcon
+                : styles.checkmarkIcon
+            }>
             <Icon
               name="checkmark-sharp"
               type="ionicon"
@@ -522,7 +527,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.arsenic,
   },
-  checkmarkSharpIcon: {
+  feedbackCheckmarkIcon: {
+    position: 'absolute',
+    left: '90%',
+    top: 6,
+  },
+  checkmarkIcon: {
     position: 'absolute',
     right: '90%',
     top: 6,
